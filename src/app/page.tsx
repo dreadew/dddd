@@ -68,12 +68,13 @@ export default function Home() {
   useEffect(() => {
     if (!saidYes) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const id = requestAnimationFrame(() => {
+    // Даём прочитать afterYes, прежде чем уезжать к финалу.
+    const id = window.setTimeout(() => {
       document
         .getElementById("finale")
         ?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-    });
-    return () => cancelAnimationFrame(id);
+    }, 1300);
+    return () => window.clearTimeout(id);
   }, [saidYes]);
 
   return (
@@ -86,7 +87,7 @@ export default function Home() {
               if (chapter.id === "finale" && !saidYes) return null;
               const Body = chapterBodies[chapter.id] ?? DefaultBody;
               return (
-                <ChapterShell key={chapter.id} chapter={chapter}>
+                <ChapterShell key={chapter.id} chapter={chapter} name={herName}>
                   <Body chapter={chapter} name={herName} answers={answers} onAnswer={onAnswer} onYes={onYes} />
                 </ChapterShell>
               );

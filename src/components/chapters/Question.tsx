@@ -31,6 +31,8 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
   const [attempts, setAttempts] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [said, setSaid] = useState(false);
+  // Кнопки оживают только когда вопрос уже проявился.
+  const [armed, setArmed] = useState(false);
 
   const arenaRef = useRef<HTMLDivElement>(null);
   const yesRef = useRef<HTMLButtonElement>(null);
@@ -99,6 +101,7 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
   }
 
   function sayYes() {
+    if (!armed) return;
     setSaid(true);
     onYes();
   }
@@ -108,11 +111,11 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
   const noLabel = reduced && attempts > 0 ? currentTease : questionText.no;
   const yesScale = reduced ? 1 : 1 + Math.min(attempts, 5) * 0.04;
 
-  const appear = (delay: number) => ({
+  const appear = (delay: number, reducedDelay = 0) => ({
     initial: { opacity: 0, y: reduced ? 0 : 12 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, amount: 0.5 },
-    transition: reduced ? { duration: 0.3 } : { duration: 0.9, delay, ease: "easeOut" as const },
+    transition: reduced ? { duration: 0.3, delay: reducedDelay } : { duration: 0.9, delay, ease: "easeOut" as const },
   });
 
   return (
@@ -151,16 +154,21 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
         ) : null}
       </div>
 
-      <div
+      <motion.div
         ref={arenaRef}
-        onPointerMove={nearNo}
-        className={`relative w-full ${reduced ? "" : "min-h-64"}`}
+        {...appear(2.3, 0.4)}
+        onAnimationComplete={() => setArmed(true)}
+        onPointerMove={armed ? nearNo : undefined}
+        aria-hidden={armed ? undefined : true}
+        className={`relative w-full ${reduced ? "" : "min-h-64"} ${armed ? "" : "pointer-events-none"}`}
       >
         <div className="flex w-full flex-wrap items-start justify-center gap-4">
           <motion.button
             ref={yesRef}
             type="button"
             onClick={sayYes}
+            disabled={!armed}
+            tabIndex={armed ? undefined : -1}
             animate={{ scale: yesScale }}
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
             className="relative z-10 min-h-14 min-w-32 rounded-full border border-[#f4a259] bg-[#f4a259] px-8 py-3 text-lg font-semibold text-[#0b1026] shadow-[0_0_24px_rgb(244_162_89/0.45)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7c08a] active:bg-[#f7c08a]"
@@ -180,7 +188,8 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
                   e.preventDefault();
                   dodge({ x: e.clientX, y: e.clientY });
                 }}
-                disabled={exhausted}
+                disabled={exhausted || !armed}
+                tabIndex={armed ? undefined : -1}
                 animate={{ x: offset.x, y: offset.y }}
                 transition={{ type: "spring", stiffness: 420, damping: 26 }}
                 className="min-h-14 min-w-24 max-w-56 touch-manipulation rounded-full border border-white/25 bg-[#0b1026]/60 px-6 py-3 text-base font-medium text-[#f3e9dc] backdrop-blur-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7c08a] disabled:opacity-50"
@@ -190,7 +199,7 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
             </span>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

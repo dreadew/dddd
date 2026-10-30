@@ -3,8 +3,17 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import type { Chapter } from "@/content/chapters";
+import { fillName } from "@/lib/config";
 
-export function ChapterShell({ chapter, children }: { chapter: Chapter; children?: ReactNode }) {
+export function ChapterShell({
+  chapter,
+  name = "ты",
+  children,
+}: {
+  chapter: Chapter;
+  name?: string;
+  children?: ReactNode;
+}) {
   const reduced = useReducedMotion();
 
   return (
@@ -26,9 +35,9 @@ export function ChapterShell({ chapter, children }: { chapter: Chapter; children
             id={`${chapter.id}-title`}
             className="text-xs font-medium uppercase tracking-[0.25em] text-[#f7c08a]/80"
           >
-            {chapter.title}
+            {fillName(chapter.title, name)}
           </h2>
-          <p className="subtitle text-2xl leading-snug">{chapter.subtitle}</p>
+          <p className="subtitle text-2xl leading-snug">{fillName(chapter.subtitle, name)}</p>
         </header>
         {children}
       </motion.div>

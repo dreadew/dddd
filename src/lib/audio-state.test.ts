@@ -10,5 +10,15 @@ describe("nextStatus", () => {
       expect(nextStatus(s, "fail")).toBe("error");
   });
   it("error + toggle -> error", () => expect(nextStatus("error", "toggle")).toBe("error"));
+  it("playing + externalPause -> paused", () => expect(nextStatus("playing", "externalPause")).toBe("paused"));
+  it("paused + externalPlay -> playing", () => expect(nextStatus("paused", "externalPlay")).toBe("playing"));
+  it("idle/error не оживают от внешних событий", () => {
+    for (const s of ["idle", "error"] as const)
+      for (const e of ["externalPause", "externalPlay"] as const) expect(nextStatus(s, e)).toBe(s);
+  });
+  it("externalPause при paused и externalPlay при playing ничего не меняют", () => {
+    expect(nextStatus("paused", "externalPause")).toBe("paused");
+    expect(nextStatus("playing", "externalPlay")).toBe("playing");
+  });
   it("idle + toggle -> idle", () => expect(nextStatus("idle", "toggle")).toBe("idle"));
 });

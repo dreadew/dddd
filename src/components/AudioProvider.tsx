@@ -59,10 +59,16 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     };
     audio.addEventListener("error", onError);
     audio.addEventListener("timeupdate", onTime);
+    const onPause = () => dispatch("externalPause");
+    const onPlay = () => dispatch("externalPlay");
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("play", onPlay);
 
     return () => {
       audio.removeEventListener("error", onError);
       audio.removeEventListener("timeupdate", onTime);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("play", onPlay);
       audio.pause();
       audio.removeAttribute("src");
       audioRef.current = null;
