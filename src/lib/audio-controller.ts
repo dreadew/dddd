@@ -75,8 +75,12 @@ export function createAudioController(
   const load = (src: string, at: number, loop: boolean) => {
     audio.loop = loop;
     audio.src = src;
-    audio.currentTime = at;
     pendingSeek = at;
+    try {
+      audio.currentTime = at;
+    } catch {
+      // Старый WebKit бросает InvalidStateError, пока нет метаданных: перемотает onMeta.
+    }
   };
   const onMeta = () => {
     if (pendingSeek !== null && Math.abs(audio.currentTime - pendingSeek) > 0.5) {
@@ -106,12 +110,13 @@ export function createAudioController(
         swapping = false;
         if (!audio.paused) dispatch("start");
       },
-      (err: unknown) => {
+      () => {
         if (gen !== generation) return;
         swapping = false;
-        // Основной трек не играет: это уже настоящая поломка (кроме прерванного play).
-        if (isAbort(err)) dispatch("externalPause");
-        else dispatch("fail");
+        // Отказ play() (iOS: NotAllowedError вне жеста, AbortError) — не поломка:
+        // основной трек стоит на своём месте, статус paused, следующее нажатие на плеер
+        // (настоящий жест) его продолжит. Настоящая ошибка файла придёт событием error.
+        dispatch("externalPause");
       },
     );
   }

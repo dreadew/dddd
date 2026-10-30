@@ -6,24 +6,58 @@ import type { AudioStatus } from "./audio-state";
 // резолвится промис play(): так проверяется худший порядок событий.
 class FakeAudio extends EventTarget {
   paused = true;
-  currentTime = 0;
   duration = NaN;
   loop = true;
   ended = false;
-  src = "/main.mp3";
   playCalls = 0;
+  // Файлы, на которых play() отказывает без ошибки элемента (iOS: NotAllowedError вне жеста).
+  refused = new Set<string>();
+  // Старый WebKit: currentTime до загрузки метаданных бросает InvalidStateError.
+  seekThrowsBeforeMeta = false;
+  private time = 0;
+  private source = "/main.mp3";
+  private hasMeta = true;
+
+  get src() {
+    return this.source;
+  }
+  set src(v: string) {
+    this.source = v;
+    this.hasMeta = false;
+    this.time = 0;
+  }
+
+  get currentTime() {
+    return this.time;
+  }
+  set currentTime(v: number) {
+    if (this.seekThrowsBeforeMeta && !this.hasMeta) {
+      throw new DOMException("not loaded", "InvalidStateError");
+    }
+    this.time = v;
+  }
+
+  private loadMeta() {
+    if (this.hasMeta) return;
+    this.hasMeta = true;
+    this.dispatchEvent(new Event("loadedmetadata"));
+  }
   nextPlay: "ok" | "fail" | "abort" = "ok";
   // Файлы, которых «нет»: play() на них падает с ошибкой элемента.
   missing = new Set<string>();
 
   play(): Promise<void> {
     this.playCalls++;
+    if (this.refused.has(this.src)) {
+      return Promise.reject(new DOMException("not allowed", "NotAllowedError"));
+    }
     if (this.missing.has(this.src)) {
       this.dispatchEvent(new Event("error"));
       return Promise.reject(new DOMException("no source", "NotSupportedError"));
     }
     if (this.nextPlay === "fail") return Promise.reject(new DOMException("no source", "NotSupportedError"));
     if (this.nextPlay === "abort") return Promise.reject(new DOMException("interrupted", "AbortError"));
+    this.loadMeta();
     this.paused = false;
     this.ended = false;
     this.dispatchEvent(new Event("play"));
@@ -467,5 +501,99 @@ describe("отрывок песни в главе", () => {
     await flush();
     expect(audio.src).toBe("/main.mp3");
     expect(ctrl.getTrack()).toBe("main");
+  });
+});
+
+describe("отрывок: отказ play() и падающая перемотка", () => {
+  it("iOS отказал в play() только отрывку: основной трек на месте, музыка не умирает", async () => {
+    const { audio, ctrl, seen } = await playingMain();
+    audio.refused.add("/clip.mp3");
+    ctrl.enterClip();
+    await flush();
+    await flush();
+    expect(seen).not.toContain("error");
+    expect(ctrl.getStatus()).not.toBe("error");
+    expect(ctrl.getTrack()).toBe("main");
+    expect(audio.src).toBe("/main.mp3");
+    expect(audio.currentTime).toBe(75);
+    expect(audio.paused).toBe(false);
+    expect(ctrl.getStatus()).toBe("playing");
+  });
+
+  it("iOS отказал и отрывку, и основному: paused на сохранённом месте, кнопка продолжает", async () => {
+    const { audio, ctrl, seen } = await playingMain();
+    audio.refused.add("/clip.mp3");
+    audio.refused.add("/main.mp3");
+    ctrl.enterClip();
+    await flush();
+    await flush();
+    expect(seen).not.toContain("error");
+    expect(ctrl.getStatus()).toBe("paused");
+    expect(ctrl.getTrack()).toBe("main");
+    expect(audio.src).toBe("/main.mp3");
+    expect(audio.currentTime).toBe(75);
+    // Следующее нажатие на плеер (настоящий жест) снова разрешено.
+    audio.refused.clear();
+    ctrl.toggle();
+    await flush();
+    expect(ctrl.getStatus()).toBe("playing");
+    expect(audio.paused).toBe(false);
+    expect(audio.src).toBe("/main.mp3");
+    expect(audio.currentTime).toBe(75);
+  });
+
+  it("отказ основному треку после конца отрывка: paused, не error", async () => {
+    const { audio, ctrl, seen } = await playingMain();
+    ctrl.enterClip();
+    await flush();
+    audio.refused.add("/main.mp3");
+    audio.tick(30);
+    await flush();
+    expect(seen).not.toContain("error");
+    expect(ctrl.getStatus()).toBe("paused");
+    expect(ctrl.getTrack()).toBe("main");
+    expect(audio.currentTime).toBe(75);
+  });
+
+  it("настоящая ошибка элемента на основном треке всё же даёт error", async () => {
+    const { audio, ctrl } = await playingMain();
+    ctrl.enterClip();
+    await flush();
+    audio.missing.add("/main.mp3");
+    audio.tick(30);
+    await flush();
+    expect(ctrl.getStatus()).toBe("error");
+  });
+
+  it("currentTime бросает сразу после смены src: перемотка после метаданных, ничего не застревает", async () => {
+    const { audio, ctrl, seen } = await playingMain({ startAt: 42 });
+    audio.seekThrowsBeforeMeta = true;
+    expect(() => ctrl.enterClip()).not.toThrow();
+    await flush();
+    expect(ctrl.getTrack()).toBe("clip");
+    expect(audio.src).toBe("/clip.mp3");
+    expect(audio.currentTime).toBe(42);
+    expect(audio.paused).toBe(false);
+    audio.tick(30);
+    await flush();
+    expect(ctrl.getTrack()).toBe("main");
+    expect(audio.src).toBe("/main.mp3");
+    expect(audio.currentTime).toBe(75);
+    expect(audio.paused).toBe(false);
+    expect(ctrl.getStatus()).toBe("playing");
+    expect(seen).not.toContain("error");
+  });
+
+  it("currentTime бросает при уходе из главы: основной трек всё равно возвращается", async () => {
+    const { audio, ctrl } = await playingMain();
+    ctrl.enterClip();
+    await flush();
+    audio.seekThrowsBeforeMeta = true;
+    expect(() => ctrl.exitClip()).not.toThrow();
+    await flush();
+    expect(ctrl.getTrack()).toBe("main");
+    expect(audio.src).toBe("/main.mp3");
+    expect(audio.currentTime).toBe(75);
+    expect(ctrl.getStatus()).toBe("playing");
   });
 });
