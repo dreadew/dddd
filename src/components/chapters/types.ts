@@ -5,4 +5,6 @@ export type ChapterBodyProps = {
   name: string;
   answers: (number | null)[];
   onAnswer: (questionIndex: number, optionIndex: number) => void;
+  // Ответ «да» в главе «Вопрос»: открывает финал.
+  onYes?: () => void;
 };

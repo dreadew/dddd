@@ -92,7 +92,14 @@ export const talkReactions: [string, string][] = [
   ],
 ];
 
-export const questionText: { ask: string; yes: string; no: string; noTeases: string[] } = {
+export const questionText: {
+  ask: string;
+  yes: string;
+  no: string;
+  noTeases: string[];
+  afterYes: string;
+  noDisabledHint: string;
+} = {
   ask: "Мне очень хорошо, когда {name} рядом. Давай будем вместе? По-настоящему, не только по вечерам.",
   yes: "Да",
   no: "Нет",
@@ -103,6 +110,10 @@ export const questionText: { ask: string; yes: string; no: string; noTeases: str
     "Кажется, она стесняется.",
     "Остался только один вариант.",
   ],
+  // Показывается под кнопками после «да», финал открывается ниже.
+  afterYes: "Я знал. Листай дальше, там рассвет.",
+  // Подсказка для экранных читалок, когда «нет» (без анимации) сдалась.
+  noDisabledHint: "Кнопка «нет» сдалась. Осталась только «да».",
 };
 
 export const finaleLines: string[] = [
@@ -110,3 +121,12 @@ export const finaleLines: string[] = [
   "И вечеров, и разговоров, и споров, после которых всё равно хочется обняться.",
   "Увидимся на набережной. Сегодня, завтра и дальше.",
 ];
+
+// Финал вспоминает ответы из «Разговора»: finaleEchoes[вопрос][вариант].
+export const finaleEchoes: [string, string][] = [
+  ["Будем спорить, как ты и выбрала. И мириться, конечно.", "Будем молчать рядом: это мы тоже умеем."],
+  ["Ночной город остаётся нашим.", "А рассвет ты выбрала сама. Вот он."],
+];
+
+// Если в «Разговоре» ничего не выбрано.
+export const finaleEchoFallback = "А на вопросы из «Разговора» ответим вместе, вживую.";
