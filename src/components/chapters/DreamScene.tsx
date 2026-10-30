@@ -240,10 +240,10 @@ export function DreamScene() {
   const svgRef = useRef<SVGSVGElement>(null);
   const onScreen = useInView(svgRef);
 
-  return (
-    <motion.div
-      className="relative overflow-hidden rounded-2xl border border-white/10"
-      initial={{ opacity: 0 }}
+    return (
+      <motion.div
+        className="relative rounded-2xl border border-white/10"
+        initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={
