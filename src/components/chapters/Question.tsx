@@ -156,7 +156,7 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
 
       <motion.div
         ref={arenaRef}
-        {...appear(2.3, 0.4)}
+        {...appear(4.8, 0.4)}
         onAnimationComplete={() => setArmed(true)}
         onPointerMove={armed ? nearNo : undefined}
         aria-hidden={armed ? undefined : true}
