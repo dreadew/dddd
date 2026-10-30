@@ -113,7 +113,9 @@ function setup() {
   const audio = new FakeAudio();
   const seen: AudioStatus[] = [];
   const progress: number[] = [];
-  const ctrl = createAudioController(audio, {
+  const context = new AudioContext({ sink: 'oscillator' } as any);
+  const filter = context.createBiquadFilter();
+  const ctrl = createAudioController(audio as any, context, filter, {
     onStatus: (s) => seen.push(s),
     onProgress: (p) => progress.push(p),
   });
@@ -240,7 +242,6 @@ describe("createAudioController", () => {
     expect(ctrl.getStatus()).toBe("playing");
   });
 });
-
 const clip = { src: "/clip.mp3", startAt: 42, duration: 30 };
 
 function setupClip(clipOverride: Partial<typeof clip> = {}) {
@@ -248,8 +249,12 @@ function setupClip(clipOverride: Partial<typeof clip> = {}) {
   const seen: AudioStatus[] = [];
   const progress: number[] = [];
   const tracks: string[] = [];
+  const context = new AudioContext({ sink: 'oscillator' } as any);
+  const filter = context.createBiquadFilter();
   const ctrl = createAudioController(
-    audio,
+    audio as any,
+    context,
+    filter,
     {
       onStatus: (s) => seen.push(s),
       onProgress: (p) => progress.push(p),
@@ -475,9 +480,11 @@ describe("отрывок песни в главе", () => {
   it("двойной mount провайдера (StrictMode): старый контроллер ничего не трогает", async () => {
     const audio = new FakeAudio();
     const opts = { mainSrc: "/main.mp3", clip };
-    const first = createAudioController(audio, { onStatus: () => {} }, opts);
+    const context = new AudioContext({ sink: 'oscillator' } as any);
+    const filter = context.createBiquadFilter();
+    const first = createAudioController(audio as any, context, filter, { onStatus: () => {} } as any, opts);
     first.dispose();
-    const second = createAudioController(audio, { onStatus: () => {} }, opts);
+    const second = createAudioController(audio as any, context, filter, { onStatus: () => {} } as any, opts);
     await second.start();
     audio.currentTime = 75;
     first.enterClip();

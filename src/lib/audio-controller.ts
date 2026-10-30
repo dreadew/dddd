@@ -35,7 +35,7 @@ export type AudioController = {
 const isAbort = (err: unknown) => err instanceof DOMException && err.name === "AbortError";
 
 export function createAudioController(
-  audio: HTMLMediaElement,
+  audio: HTMLMediaElement | AudioLike,
   context: AudioContext,
   filter: BiquadFilterNode,
   handlers: {
@@ -48,7 +48,7 @@ export function createAudioController(
   let status: AudioStatus = "idle";
   let disposed = false;
 
-  const source = context.createMediaElementSource(audio);
+  const source = context.createMediaElementSource(audio as HTMLMediaElement);
   source.connect(filter);
   filter.connect(context.destination);
 
