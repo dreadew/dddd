@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { finaleEcho, finaleLines } from "@/content/chapters";
+import { finaleEcho, finaleLines, finaleNote } from "@/content/chapters";
 import { fillName } from "@/lib/config";
 import type { ChapterBodyProps } from "./types";
 
@@ -81,6 +81,9 @@ export function Finale({ answer, chapter, name = "ты" }: FinaleProps) {
     transition: reduced ? { duration: 0.3 } : { duration: 1.1, delay, ease: "easeOut" as const },
   });
 
+  // Пустой отклик (автор его выключил) не рисуется вовсе: ни пустого абзаца, ни лишнего отступа.
+  const echo = fillName(finaleEcho(answer), name).trim();
+
   let step = 0;
   const next = () => 0.4 + step++ * 0.6;
 
@@ -98,8 +101,18 @@ export function Finale({ answer, chapter, name = "ты" }: FinaleProps) {
             {fillName(line, name)}
           </motion.p>
         ))}
-        <motion.p {...appear(next())} className="subtitle text-xl text-[#fff1df]">
-          {fillName(finaleEcho(answer), name)}
+        {echo && (
+          <motion.p {...appear(next())} className="subtitle text-xl text-[#fff1df]">
+            {echo}
+          </motion.p>
+        )}
+        {/* P.S.: последняя строка, мельче и курсивом, проявляется самой последней */}
+        <motion.p
+          {...appear(next() + 0.6)}
+          data-finale-note
+          className="mx-auto mt-4 max-w-sm text-base italic leading-relaxed text-[#fff1df]/90"
+        >
+          {fillName(finaleNote, name)}
         </motion.p>
       </div>
     </>

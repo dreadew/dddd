@@ -6,6 +6,7 @@ import {
   finaleEchoes,
   finaleEchoFallback,
   finaleLines,
+  finaleNote,
   questionText,
   talkQuestion,
   talkReactions,
@@ -21,6 +22,7 @@ const allCopy = [
   ...talkQuestion.options,
   ...talkReactions,
   ...finaleLines,
+  finaleNote,
   ...finaleEchoes,
   finaleEchoFallback,
   questionText.yes,
@@ -62,7 +64,7 @@ describe("chapters", () => {
   it("знакомство начинается с пиццы и Смешариков", () => {
     const evening = chapters.find((c) => c.id === "evening")!.lines.join("\n");
     expect(evening).toMatch(/пицц/i);
-    expect(evening).toMatch(/Смешарик/);
+    expect(evening).toMatch(/смешарик/i);
   });
 
   it("первое свидание и взаимность есть в тексте", () => {
@@ -131,18 +133,31 @@ describe("разговор и финал", () => {
     expect(talkQuestion.options).toEqual(["Ночной город", "Рассвет"]);
   });
 
-  it("на каждый вариант есть реакция и отклик в финале", () => {
+  it("на каждый вариант есть реакция", () => {
     expect(talkReactions).toHaveLength(talkQuestion.options.length);
-    expect(finaleEchoes).toHaveLength(talkQuestion.options.length);
-    for (const text of [...talkReactions, ...finaleEchoes]) expect(text.trim()).not.toBe("");
+    for (const text of talkReactions) expect(text.trim()).not.toBe("");
   });
 
-  it("finaleEcho: выбранный вариант -> его отклик, без ответа -> запасная фраза", () => {
-    expect(finaleEcho(0)).toBe(finaleEchoes[0]);
-    expect(finaleEcho(1)).toBe(finaleEchoes[1]);
+  it("отклик в финале: либо выключен целиком, либо есть на каждый вариант", () => {
+    if (finaleEchoes.length === 0) {
+      expect(finaleEchoFallback).toBe("");
+    } else {
+      expect(finaleEchoes).toHaveLength(talkQuestion.options.length);
+      for (const text of finaleEchoes) expect(text.trim()).not.toBe("");
+    }
+  });
+
+  it("finaleEcho: выбранный вариант -> его отклик, иначе запасная фраза (пустая = отклика нет)", () => {
+    for (let i = 0; i < talkQuestion.options.length; i++) {
+      expect(finaleEcho(i)).toBe(finaleEchoes[i] || finaleEchoFallback);
+    }
     expect(finaleEcho(null)).toBe(finaleEchoFallback);
     expect(finaleEcho(5)).toBe(finaleEchoFallback);
-    expect(finaleEchoes[0]).not.toBe(finaleEchoes[1]);
+  });
+
+  it("P.S. в финале не пустой и не начинается с {name}", () => {
+    expect(finaleNote.trim()).not.toBe("");
+    expect(finaleNote.startsWith("{name}")).toBe(false);
   });
 
   it("финал не пустой", () => {

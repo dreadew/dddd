@@ -20,7 +20,6 @@ export function Gate({ onStart }: { onStart: () => void }) {
       animate={{ opacity: 1 }}
       transition={{ duration: reduced ? 0 : 1.2 }}
     >
-      <p className="subtitle text-2xl">небольшой интерактив</p>
       <button
         type="button"
         onClick={handleStart}

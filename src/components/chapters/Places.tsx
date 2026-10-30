@@ -1,7 +1,9 @@
 "use client";
 
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useAudio } from "@/components/AudioProvider";
+import { featuredClip } from "@/content/track";
 import { fillName } from "@/lib/config";
 import type { ChapterBodyProps } from "./types";
 
@@ -89,6 +91,17 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
   const svgRef = useRef<SVGSVGElement>(null);
   const onScreen = useInView(svgRef);
 
+  // Отрывок песни: включается, когда глава почти целиком на экране, и обрывается, когда она уходит.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const mostlyInView = useInView(rootRef, { amount: 0.6 });
+  const { track, status, enterClip, exitClip } = useAudio();
+  useEffect(() => {
+    if (mostlyInView) enterClip();
+    else exitClip();
+  }, [mostlyInView, enterClip, exitClip]);
+  const clipOn = track === "clip";
+  const clipPlaying = clipOn && status === "playing";
+
   const fade = (delay: number) => ({
     initial: { opacity: 0 },
     whileInView: { opacity: 1 },
@@ -97,12 +110,12 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgb(11_16_38/0.2),rgb(58_42_77/0.45))]">
+    <div ref={rootRef} className="flex flex-col gap-6">
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgb(11_16_38/0.2),rgb(58_42_77/0.45))]">
         <svg
           ref={svgRef}
           viewBox="0 46 360 150"
-          className={`block h-auto w-full ${onScreen ? "" : "places-paused"}`}
+          className={`block h-auto w-full ${onScreen ? "" : "places-paused"} ${clipPlaying ? "" : "places-clip-paused"}`}
           aria-hidden="true"
           focusable="false"
         >
@@ -181,15 +194,21 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
                 <line x1={x} x2={x} y1="114" y2="80" stroke="#2f2a55" strokeWidth="1.5" />
                 <circle cx={x} cy="79" r="11" fill="url(#places-lamp)" />
                 <circle cx={x} cy="79" r="2.2" fill="#f7c08a" />
-                <rect
-                  x={x - 1.5}
-                  y={HORIZON + 2}
-                  width="3"
-                  height="40"
-                  fill="url(#places-reflect)"
-                  className={reduced ? undefined : "places-shimmer"}
-                  style={{ animationDelay: `${x / 40}s` }}
-                />
+                {/* Пока звучит отрывок, отражения мягко пульсируют в такт */}
+                <g
+                  className={clipOn && !reduced ? "places-clip-pulse" : undefined}
+                  style={{ animationDelay: `${(x / 36) * 0.235}s` }}
+                >
+                  <rect
+                    x={x - 1.5}
+                    y={HORIZON + 2}
+                    width="3"
+                    height="40"
+                    fill="url(#places-reflect)"
+                    className={reduced ? undefined : "places-shimmer"}
+                    style={{ animationDelay: `${x / 40}s` }}
+                  />
+                </g>
               </g>
             ))}
           </motion.g>
@@ -201,6 +220,20 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
             ))}
           </motion.g>
         </svg>
+        {/* Подпись в духе киносубтитров, пока звучит отрывок */}
+        <motion.p
+          aria-hidden="true"
+          className="subtitle pointer-events-none absolute inset-x-0 bottom-2 text-center text-sm"
+          initial={false}
+          animate={{ opacity: clipPlaying ? 0.95 : 0, y: clipPlaying || reduced ? 0 : 4 }}
+          transition={{ duration: reduced ? 0.2 : 1.2, ease: "easeOut" }}
+        >
+          {/* Нота рисуется SVG: в Lora нет глифа ♪, браузер взял бы его из другого шрифта */}
+          <svg viewBox="0 0 12 14" className="mr-1.5 inline-block h-[0.9em] w-auto align-[-0.1em]" fill="currentColor">
+            <path d="M4 1.5 11 0v9.6a2 2 0 1 1-1.2-1.83V3.1L5.2 4v7.6A2 2 0 1 1 4 9.77z" />
+          </svg>
+          {featuredClip.title}
+        </motion.p>
       </div>
 
       <div className="flex flex-col gap-4 text-center text-lg leading-relaxed">

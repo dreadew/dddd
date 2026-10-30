@@ -1,10 +1,12 @@
 "use client";
 
-import { track } from "@/content/track";
+import { featuredClip, track } from "@/content/track";
 import { useAudio } from "./AudioProvider";
 
 export function Player() {
-  const { status, progress, toggle } = useAudio();
+  const { status, progress, toggle, track: current } = useAudio();
+  // Во время отрывка в плеере его название, а прогресс считается от начала отрывка.
+  const shown = current === "clip" ? featuredClip : track;
   const playing = status === "playing";
   const disabled = status === "error" || status === "idle";
   const label =
@@ -26,8 +28,8 @@ export function Player() {
           className="size-12 shrink-0 rounded-lg"
         />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[0.95rem] font-semibold leading-tight">{track.title}</p>
-          <p className="truncate text-sm italic leading-tight opacity-80">{track.artist}</p>
+          <p className="truncate text-[0.95rem] font-semibold leading-tight">{shown.title}</p>
+          <p className="truncate text-sm italic leading-tight opacity-80">{shown.artist}</p>
           <div
             className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/15"
             role="progressbar"
