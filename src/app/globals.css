@@ -171,8 +171,9 @@ html:has([data-snap]) {
 /* Глава «Первое свидание»: двое идут навстречу, пожимают руки, над ними вспыхивает искорка.
    Конечная поза задана базовыми стилями (её и видно при reduced motion),
    анимации с fill-mode both до появления на экране стоят на первом кадре. */
+/* Человечки увеличены в 2.2 раза: 80 своих единиц это ~176 единиц сцены */
 @keyframes date-walk {
-  from { transform: translateX(-110px); }
+  from { transform: translateX(-80px); }
   to { transform: translateX(0); }
 }
 

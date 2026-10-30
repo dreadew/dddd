@@ -31,10 +31,20 @@ describe("Talk", () => {
     const svgClass = scene.match(/<svg[^>]*class="([^"]*)"/)![1].split(/\s+/);
     expect(svgClass).toContain("date-scene");
     expect(svgClass).not.toContain("date-go");
-    // двое человечков с рукой для рукопожатия у каждого
+    // двое человечков (тень и тело у каждого) и по руке с ладонью для рукопожатия
     expect(scene.match(/class="date-walk"/g)?.length).toBe(4);
-    expect(scene.match(/class="date-arm"/g)?.length).toBe(4);
+    expect(scene.match(/class="date-arm"/g)?.length).toBe(2);
     expect(scene).toContain('class="date-spark"');
+  });
+
+  it("человечки крупные: на экране 390 px (картинка ~340 px) ростом не меньше ~55 px", () => {
+    const [, , w] = scene.match(/viewBox="([^"]+)"/)![1].split(/\s+/).map(Number);
+    const scales = [...scene.matchAll(/scale\((-?[\d.]+) ([\d.]+)\)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+    expect(scales).toHaveLength(2);
+    // один смотрит вправо, другой отражён и смотрит на него
+    expect(scales.map(([x]) => Math.sign(x)).sort()).toEqual([-1, 1]);
+    // рост человечка в своих единицах ~29
+    for (const [, y] of scales) expect((29 * y * 340) / w).toBeGreaterThanOrEqual(55);
   });
 
   it("картинка стоит перед текстом, все строки на месте", () => {
