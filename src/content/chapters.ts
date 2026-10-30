@@ -78,18 +78,6 @@ export const chapters: Chapter[] = [
   },
 ];
 
-// Единственный вопрос в «Первом свидании».
-export const talkQuestion: { prompt: string; options: [string, string] } = {
-  prompt: "Ночной город или рассвет?",
-  options: ["Ночной город", "Рассвет"],
-};
-
-// Короткая тёплая реакция после выбора: talkReactions[вариант].
-export const talkReactions: [string, string] = [
-  "Огни, набережная и разговоры до самой ночи.",
-  "Красиво. Его хочется встречать не в одиночку.",
-];
-
 export const questionText: {
   ask: string;
   yes: string;
@@ -123,13 +111,3 @@ export const finaleLines: string[] = [
 export const finaleNote: string =
   "P.S. Я, если честно, интернет-герой: никому и никогда не делал таких признаний. Поэтому мог придумать всё не лучшим образом и сам не знаю, как это сказать правильнее. Но всё это правда.";
 
-// Финал вспоминает ответ на вопрос «ночной город или рассвет»: finaleEchoes[вариант].
-// Пустой список и пустая запасная фраза: отклика в финале нет.
-export const finaleEchoes: string[] = [];
-
-// Если на вопрос не ответили.
-export const finaleEchoFallback = "";
-
-export function finaleEcho(answer: number | null): string {
-  return (answer !== null && finaleEchoes[answer]) || finaleEchoFallback;
-}

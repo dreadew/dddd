@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { chapters, talkQuestion } from "@/content/chapters";
+import { chapters } from "@/content/chapters";
 import { fillName } from "@/lib/config";
 import { Talk } from "./Talk";
 
@@ -8,7 +8,7 @@ const chapter = chapters.find((c) => c.id === "talk")!;
 const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 
 describe("Talk", () => {
-  const html = renderToStaticMarkup(<Talk chapter={chapter} name="Аня" onAnswer={() => {}} />);
+  const html = renderToStaticMarkup(<Talk chapter={chapter} name="Аня" />);
   const scene = html.slice(html.indexOf("<svg"), html.indexOf("</svg>") + 6);
 
   it("рисует одну декоративную картинку, скрытую от читалок", () => {
@@ -37,15 +37,18 @@ describe("Talk", () => {
     expect(scene).toContain('class="date-spark"');
   });
 
-  it("картинка стоит перед текстом, все строки и вопрос на месте", () => {
+  it("картинка стоит перед текстом, все строки на месте", () => {
     expect(html.indexOf("<svg")).toBeLessThan(html.indexOf("<p"));
+    expect(html.match(/<p[\s>]/g)?.length).toBe(chapter.lines.length);
     for (const line of chapter.lines) expect(html).toContain(escape(fillName(line, "Аня")));
-    expect(html).toContain(escape(talkQuestion.prompt));
-    for (const option of talkQuestion.options) expect(html).toContain(escape(option));
+  });
+
+  it("вопроса и кнопок в главе больше нет", () => {
+    expect(html).not.toMatch(/<(button|fieldset)[\s>]/);
   });
 
   it("разметка детерминирована", () => {
-    const again = renderToStaticMarkup(<Talk chapter={chapter} name="Аня" onAnswer={() => {}} />);
+    const again = renderToStaticMarkup(<Talk chapter={chapter} name="Аня" />);
     expect(again).toBe(html);
   });
 });

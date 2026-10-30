@@ -2,15 +2,11 @@ import { describe, expect, it } from "vitest";
 import { fillName, getHerName } from "@/lib/config";
 import {
   chapters,
-  finaleEcho,
-  finaleEchoes,
-  finaleEchoFallback,
   finaleLines,
   finaleNote,
   questionText,
-  talkQuestion,
-  talkReactions,
 } from "./chapters";
+import * as content from "./chapters";
 import { track } from "./track";
 
 const order = ["evening", "talk", "places", "night", "question", "finale"];
@@ -18,13 +14,8 @@ const order = ["evening", "talk", "places", "night", "question", "finale"];
 // Весь текст сайта, кроме самого предложения.
 const allCopy = [
   ...chapters.flatMap((c) => [c.title, c.subtitle ?? "", ...c.lines]),
-  talkQuestion.prompt,
-  ...talkQuestion.options,
-  ...talkReactions,
   ...finaleLines,
   finaleNote,
-  ...finaleEchoes,
-  finaleEchoFallback,
   questionText.yes,
   questionText.no,
   ...questionText.noTeases,
@@ -128,31 +119,11 @@ describe("разговор и финал", () => {
     expect(questionText.no.trim()).not.toBe("");
   });
 
-  it("один вопрос в разговоре: «Ночной город или рассвет?», два варианта", () => {
-    expect(talkQuestion.prompt).toBe("Ночной город или рассвет?");
-    expect(talkQuestion.options).toEqual(["Ночной город", "Рассвет"]);
-  });
-
-  it("на каждый вариант есть реакция", () => {
-    expect(talkReactions).toHaveLength(talkQuestion.options.length);
-    for (const text of talkReactions) expect(text.trim()).not.toBe("");
-  });
-
-  it("отклик в финале: либо выключен целиком, либо есть на каждый вариант", () => {
-    if (finaleEchoes.length === 0) {
-      expect(finaleEchoFallback).toBe("");
-    } else {
-      expect(finaleEchoes).toHaveLength(talkQuestion.options.length);
-      for (const text of finaleEchoes) expect(text.trim()).not.toBe("");
+  it("вопроса «Ночной город или рассвет?» и откликов на него в финале больше нет", () => {
+    for (const name of ["talkQuestion", "talkReactions", "finaleEchoes", "finaleEchoFallback", "finaleEcho"]) {
+      expect(content).not.toHaveProperty(name);
     }
-  });
-
-  it("finaleEcho: выбранный вариант -> его отклик, иначе запасная фраза (пустая = отклика нет)", () => {
-    for (let i = 0; i < talkQuestion.options.length; i++) {
-      expect(finaleEcho(i)).toBe(finaleEchoes[i] || finaleEchoFallback);
-    }
-    expect(finaleEcho(null)).toBe(finaleEchoFallback);
-    expect(finaleEcho(5)).toBe(finaleEchoFallback);
+    for (const text of allCopy) expect(text).not.toMatch(/ночной город или рассвет/i);
   });
 
   it("P.S. в финале не пустой и не начинается с {name}", () => {

@@ -1,48 +1,32 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { chapters, finaleLines, finaleNote } from "@/content/chapters";
+import { fillName } from "@/lib/config";
+import { Finale } from "./Finale";
 
-// Подменяем только отклики финала: остальные тексты берутся настоящие.
-const echoes = vi.hoisted(() => ({ list: [] as string[], fallback: "" }));
-
-vi.mock("@/content/chapters", async (importActual) => {
-  const actual = await importActual<typeof import("@/content/chapters")>();
-  return {
-    ...actual,
-    finaleEcho: (answer: number | null) =>
-      (answer !== null && echoes.list[answer]) || echoes.fallback,
-  };
-});
-
-const { Finale } = await import("./Finale");
-const { finaleLines, finaleNote } = await import("@/content/chapters");
-
-const paragraphs = (html: string) => html.match(/<p[\s>]/g)?.length ?? 0;
+const chapter = chapters.find((c) => c.id === "finale")!;
+// fillName ставит неразрывные пробелы после коротких слов, поэтому сравниваем без них.
+const plain = (s: string) => s.replace(/ /g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"');
 
 describe("Finale", () => {
-  afterEach(() => {
-    echoes.list = [];
-    echoes.fallback = "";
+  const html = renderToStaticMarkup(<Finale chapter={chapter} name="Аня" />);
+
+  it("все строки главы и финала на месте, по порядку", () => {
+    const texts = [...chapter.lines, ...finaleLines].map((l) => plain(fillName(l, "Аня")));
+    let from = 0;
+    for (const text of texts) {
+      const at = plain(html).indexOf(text, from);
+      expect(at).toBeGreaterThan(-1);
+      from = at + text.length;
+    }
   });
 
-  it("пустой отклик: абзаца для него нет, P.S. последний", () => {
-    const html = renderToStaticMarkup(<Finale answer={0} />);
-    expect(paragraphs(html)).toBe(finaleLines.length + 1);
+  it("лишних абзацев нет: строки главы, строки финала и P.S.", () => {
+    expect(html.match(/<p[\s>]/g)?.length).toBe(chapter.lines.length + finaleLines.length + 1);
+  });
+
+  it("P.S. стоит последним", () => {
     expect(html.trimEnd()).toMatch(/data-finale-note[^>]*>[^<]*<\/p><\/div>$/);
-    // fillName ставит неразрывные пробелы после коротких слов, поэтому сравниваем без них.
-    expect(html.replace(/ /g, " ")).toContain(finaleNote.slice(0, 20));
-  });
-
-  it("непустой отклик показывается перед P.S.", () => {
-    echoes.list = ["Отклик А", "Отклик Б"];
-    const html = renderToStaticMarkup(<Finale answer={1} />);
-    expect(paragraphs(html)).toBe(finaleLines.length + 2);
-    expect(html.indexOf("Отклик Б")).toBeGreaterThan(-1);
-    expect(html.indexOf("Отклик Б")).toBeLessThan(html.indexOf("data-finale-note"));
-  });
-
-  it("без ответа и с запасной фразой показывает запасную", () => {
-    echoes.fallback = "Запасная";
-    const html = renderToStaticMarkup(<Finale answer={null} />);
-    expect(html).toContain("Запасная");
+    expect(plain(html)).toContain(plain(fillName(finaleNote, "Аня")));
   });
 });

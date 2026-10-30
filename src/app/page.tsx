@@ -33,8 +33,8 @@ function QuestionBody({ chapter, name, onYes }: ChapterBodyProps) {
   return <Question chapter={chapter} name={name} onYes={onYes ?? noop} />;
 }
 
-function FinaleBody({ chapter, name, answer }: ChapterBodyProps) {
-  return <Finale chapter={chapter} name={name} answer={answer} />;
+function FinaleBody({ chapter, name }: ChapterBodyProps) {
+  return <Finale chapter={chapter} name={name} />;
 }
 
 // Компоненты глав; для главы без записи рисуется DefaultBody.
@@ -49,10 +49,6 @@ const chapterBodies: Partial<Record<ChapterId, ComponentType<ChapterBodyProps>>>
 
 export default function Home() {
   const [started, setStarted] = useState(false);
-  // Ответ на вопрос «ночной город или рассвет»: индекс варианта или null; финал на него ссылается.
-  const [answer, setAnswer] = useState<number | null>(null);
-  const onAnswer = useCallback((optionIndex: number) => setAnswer(optionIndex), []);
-
   // Финал скрыт, пока в «Вопросе» не нажато «да».
   const [saidYes, setSaidYes] = useState(false);
   const onYes = useCallback(() => setSaidYes(true), []);
@@ -85,7 +81,7 @@ export default function Home() {
               const Body = chapterBodies[chapter.id] ?? DefaultBody;
               return (
                 <ChapterShell key={chapter.id} chapter={chapter} name={herName}>
-                  <Body chapter={chapter} name={herName} answer={answer} onAnswer={onAnswer} onYes={onYes} />
+                  <Body chapter={chapter} name={herName} onYes={onYes} />
                 </ChapterShell>
               );
             })}

@@ -3,12 +3,11 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { finaleEcho, finaleLines, finaleNote } from "@/content/chapters";
+import { finaleLines, finaleNote } from "@/content/chapters";
 import { fillName } from "@/lib/config";
 import type { ChapterBodyProps } from "./types";
 
-type FinaleProps = Pick<ChapterBodyProps, "answer"> &
-  Partial<Pick<ChapterBodyProps, "chapter" | "name">>;
+type FinaleProps = Partial<Pick<ChapterBodyProps, "chapter" | "name">>;
 
 const PIECE_COUNT = 22;
 const colors = ["#f4a259", "#f7c08a", "#e07a5f", "#f3e9dc"];
@@ -71,7 +70,7 @@ function Dawn({ reduced }: { reduced: boolean }) {
   );
 }
 
-export function Finale({ answer, chapter, name = "ты" }: FinaleProps) {
+export function Finale({ chapter, name = "ты" }: FinaleProps) {
   const reduced = useReducedMotion() === true;
 
   const appear = (delay: number) => ({
@@ -80,9 +79,6 @@ export function Finale({ answer, chapter, name = "ты" }: FinaleProps) {
     viewport: { once: true, amount: 0.5 },
     transition: reduced ? { duration: 0.3 } : { duration: 1.1, delay, ease: "easeOut" as const },
   });
-
-  // Пустой отклик (автор его выключил) не рисуется вовсе: ни пустого абзаца, ни лишнего отступа.
-  const echo = fillName(finaleEcho(answer), name).trim();
 
   let step = 0;
   const next = () => 0.4 + step++ * 0.6;
@@ -101,11 +97,6 @@ export function Finale({ answer, chapter, name = "ты" }: FinaleProps) {
             {fillName(line, name)}
           </motion.p>
         ))}
-        {echo && (
-          <motion.p {...appear(next())} className="subtitle text-xl text-[#fff1df]">
-            {echo}
-          </motion.p>
-        )}
         {/* P.S.: последняя строка, мельче и курсивом, проявляется самой последней */}
         <motion.p
           {...appear(next() + 0.6)}
