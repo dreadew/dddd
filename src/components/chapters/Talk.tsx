@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import { talkQuestion, talkReactions } from "@/content/chapters";
 import { fillName } from "@/lib/config";
+import { DateScene } from "./DateScene";
 import type { ChapterBodyProps } from "./types";
 
 type TalkProps = Pick<ChapterBodyProps, "onAnswer"> &
@@ -28,6 +29,9 @@ export function Talk({ onAnswer, chapter, name = "ты", answer }: TalkProps) {
 
   return (
     <div className="flex flex-col gap-8">
+      {/* Театр, у которого мы встретились, и двое, пожимающие руки */}
+      <DateScene />
+
       {chapter && (
         <div className="flex flex-col gap-4 text-center text-lg leading-relaxed">
           {chapter.lines.map((line, i) => (

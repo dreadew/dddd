@@ -13,3 +13,7 @@ node_modules/
 next-env.d.ts
 .env*
 !.env.example
+
+# reference photos, not part of the site
+/i.jpg
+/L.webp
