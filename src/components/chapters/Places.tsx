@@ -118,7 +118,7 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
         <svg
           ref={svgRef}
           viewBox="0 46 360 150"
-          className={`block h-auto w-full ${onScreen ? "" : "places-paused"} ${clipPlaying ? "" : "places-clip-paused"}`}
+          className={`block w-full aspect-[360/150] ${onScreen ? "" : "places-paused"} ${clipPlaying ? "" : "places-clip-paused"}`}
           aria-hidden="true"
           focusable="false"
         >

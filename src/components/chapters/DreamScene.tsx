@@ -258,13 +258,13 @@ export function DreamScene() {
           : { duration: 1.8, delay: 0.2, ease: "easeOut" }
       }
     >
-      <svg
-        ref={svgRef}
-        viewBox={`0 0 ${W} ${H}`}
-        className={`block h-auto w-full ${onScreen ? "" : "night-paused"}`}
-        aria-hidden="true"
-        focusable="false"
-      >
+        <svg
+          ref={svgRef}
+          viewBox={`0 0 ${W} ${H}`}
+          className={`block w-full aspect-[320/220] ${onScreen ? "" : "night-paused"}`}
+          aria-hidden="true"
+          focusable="false"
+        >
         <defs>
           <linearGradient id="night-sky" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#0b1026" />
