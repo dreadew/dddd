@@ -28,7 +28,8 @@ describe("Finale", () => {
     const html = renderToStaticMarkup(<Finale answer={0} />);
     expect(paragraphs(html)).toBe(finaleLines.length + 1);
     expect(html.trimEnd()).toMatch(/data-finale-note[^>]*>[^<]*<\/p><\/div>$/);
-    expect(html).toContain(finaleNote.slice(0, 20));
+    // fillName ставит неразрывные пробелы после коротких слов, поэтому сравниваем без них.
+    expect(html.replace(/ /g, " ")).toContain(finaleNote.slice(0, 20));
   });
 
   it("непустой отклик показывается перед P.S.", () => {
