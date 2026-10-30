@@ -12,7 +12,7 @@ import { Places } from "@/components/chapters/Places";
 import { Question } from "@/components/chapters/Question";
 import { Talk } from "@/components/chapters/Talk";
 import type { ChapterBodyProps } from "@/components/chapters/types";
-import { chapters, talkQuestions, type ChapterId } from "@/content/chapters";
+import { chapters, type ChapterId } from "@/content/chapters";
 import { fillName, getHerName } from "@/lib/config";
 
 const herName = getHerName(process.env.NEXT_PUBLIC_HER_NAME);
@@ -33,8 +33,8 @@ function QuestionBody({ chapter, name, onYes }: ChapterBodyProps) {
   return <Question chapter={chapter} name={name} onYes={onYes ?? noop} />;
 }
 
-function FinaleBody({ chapter, name, answers }: ChapterBodyProps) {
-  return <Finale chapter={chapter} name={name} answers={answers} />;
+function FinaleBody({ chapter, name, answer }: ChapterBodyProps) {
+  return <Finale chapter={chapter} name={name} answer={answer} />;
 }
 
 // Компоненты глав; для главы без записи рисуется DefaultBody.
@@ -49,12 +49,9 @@ const chapterBodies: Partial<Record<ChapterId, ComponentType<ChapterBodyProps>>>
 
 export default function Home() {
   const [started, setStarted] = useState(false);
-  // Ответы из главы «Разговор»: индекс выбранного варианта или null; финал на них ссылается.
-  const [answers, setAnswers] = useState<(number | null)[]>(() => talkQuestions.map(() => null));
-
-  const onAnswer = useCallback((questionIndex: number, optionIndex: number) => {
-    setAnswers((prev) => prev.map((v, i) => (i === questionIndex ? optionIndex : v)));
-  }, []);
+  // Ответ на вопрос «ночной город или рассвет»: индекс варианта или null; финал на него ссылается.
+  const [answer, setAnswer] = useState<number | null>(null);
+  const onAnswer = useCallback((optionIndex: number) => setAnswer(optionIndex), []);
 
   // Финал скрыт, пока в «Вопросе» не нажато «да».
   const [saidYes, setSaidYes] = useState(false);
@@ -88,7 +85,7 @@ export default function Home() {
               const Body = chapterBodies[chapter.id] ?? DefaultBody;
               return (
                 <ChapterShell key={chapter.id} chapter={chapter} name={herName}>
-                  <Body chapter={chapter} name={herName} answers={answers} onAnswer={onAnswer} onYes={onYes} />
+                  <Body chapter={chapter} name={herName} answer={answer} onAnswer={onAnswer} onYes={onYes} />
                 </ChapterShell>
               );
             })}

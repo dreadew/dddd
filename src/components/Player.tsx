@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/content/track";
 import { useAudio } from "./AudioProvider";
 
 export function Player() {
@@ -25,8 +26,8 @@ export function Player() {
           className="size-12 shrink-0 rounded-lg"
         />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">We Fell in Love in October</p>
-          <p className="truncate font-serif text-xs italic opacity-70">girl in red</p>
+          <p className="truncate text-[0.95rem] font-semibold leading-tight">{track.title}</p>
+          <p className="truncate text-sm italic leading-tight opacity-80">{track.artist}</p>
           <div
             className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/15"
             role="progressbar"

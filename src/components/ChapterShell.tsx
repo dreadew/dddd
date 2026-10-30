@@ -30,15 +30,13 @@ export function ChapterShell({
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: reduced ? 0.01 : 1, ease: "easeOut" }}
       >
-        <header className="flex flex-col gap-3 text-center">
-          <h2
-            id={`${chapter.id}-title`}
-            className="text-xs font-medium uppercase tracking-[0.25em] text-[#f7c08a]/80"
-          >
-            {fillName(chapter.title, name)}
-          </h2>
-          <p className="subtitle text-2xl leading-snug">{fillName(chapter.subtitle, name)}</p>
-        </header>
+        {/* Заголовок главы только для экранных читалок: на экране подписей глав нет. */}
+        <h2 id={`${chapter.id}-title`} className="sr-only">
+          {fillName(chapter.title, name)}
+        </h2>
+        {chapter.subtitle && (
+          <p className="subtitle text-center text-2xl leading-snug">{fillName(chapter.subtitle, name)}</p>
+        )}
         {children}
       </motion.div>
     </section>

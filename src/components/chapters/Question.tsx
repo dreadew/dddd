@@ -130,7 +130,7 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
         </div>
       )}
 
-      <motion.p {...appear(1.4)} className="subtitle text-center text-3xl leading-snug">
+      <motion.p {...appear(1.4)} className="subtitle text-center text-[1.625rem] leading-snug">
         {fillName(questionText.ask, name)}
       </motion.p>
 

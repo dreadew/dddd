@@ -3,11 +3,11 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { finaleEchoes, finaleEchoFallback, finaleLines } from "@/content/chapters";
+import { finaleEcho, finaleLines } from "@/content/chapters";
 import { fillName } from "@/lib/config";
 import type { ChapterBodyProps } from "./types";
 
-type FinaleProps = Pick<ChapterBodyProps, "answers"> &
+type FinaleProps = Pick<ChapterBodyProps, "answer"> &
   Partial<Pick<ChapterBodyProps, "chapter" | "name">>;
 
 const PIECE_COUNT = 22;
@@ -71,12 +71,8 @@ function Dawn({ reduced }: { reduced: boolean }) {
   );
 }
 
-export function Finale({ answers, chapter, name = "ты" }: FinaleProps) {
+export function Finale({ answer, chapter, name = "ты" }: FinaleProps) {
   const reduced = useReducedMotion() === true;
-
-  const echoes = answers
-    .map((a, qi) => (a === null ? null : finaleEchoes[qi]?.[a]))
-    .filter((e): e is string => Boolean(e));
 
   const appear = (delay: number) => ({
     initial: { opacity: 0, y: reduced ? 0 : 12 },
@@ -102,13 +98,9 @@ export function Finale({ answers, chapter, name = "ты" }: FinaleProps) {
             {fillName(line, name)}
           </motion.p>
         ))}
-        <motion.div {...appear(next())} className="flex flex-col gap-2 text-[#fff1df]">
-          {(echoes.length > 0 ? echoes : [finaleEchoFallback]).map((echo, i) => (
-            <p key={i} className="subtitle text-xl">
-              {fillName(echo, name)}
-            </p>
-          ))}
-        </motion.div>
+        <motion.p {...appear(next())} className="subtitle text-xl text-[#fff1df]">
+          {fillName(finaleEcho(answer), name)}
+        </motion.p>
       </div>
     </>
   );

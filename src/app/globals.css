@@ -16,8 +16,8 @@
   --color-night-bottom: var(--night-bottom);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
-  --font-sans: var(--font-manrope);
-  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-lora), Georgia, serif;
+  --font-serif: var(--font-lora), Georgia, serif;
 }
 
 html {
@@ -29,7 +29,7 @@ body {
   min-height: 100dvh;
   background: linear-gradient(180deg, var(--night-top) 0%, var(--night-bottom) 100%) fixed;
   color: var(--foreground);
-  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-family: var(--font-lora), Georgia, serif;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -40,7 +40,6 @@ body {
 
 /* Подписи глав в стиле киносубтитров */
 .subtitle {
-  font-family: var(--font-cormorant), Georgia, serif;
   font-style: italic;
   letter-spacing: 0.01em;
   color: var(--foreground);
@@ -68,7 +67,7 @@ html:has([data-snap]) {
   .star-twinkle { animation: none; }
 }
 
-/* Глава «Наши места»: блики на воде и мерцание окон */
+/* Глава «Наши места»: блики на воде, мерцание окон, утки */
 @keyframes places-shimmer {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
@@ -89,9 +88,20 @@ html:has([data-snap]) {
   animation: places-flicker 6s ease-in-out infinite;
 }
 
+/* Утки чуть покачиваются на воде */
+@keyframes duck-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(0.8px); }
+}
+
+.duck-bob {
+  animation: duck-bob 3.2s ease-in-out infinite;
+}
+
 /* Вне экрана анимации стоят, чтобы не греть телефон */
 .places-paused .places-shimmer,
-.places-paused .places-flicker { animation-play-state: paused; }
+.places-paused .places-flicker,
+.places-paused .duck-bob { animation-play-state: paused; }
 
 @keyframes scroll-cue {
   0%, 100% { transform: translateY(0); opacity: 0.5; }
@@ -103,7 +113,8 @@ html:has([data-snap]) {
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue-chevron { animation: none; }
   .places-shimmer,
-  .places-flicker { animation: none; }
+  .places-flicker,
+  .duck-bob { animation: none; }
 }
 
 /* Финал: падающие листья и искры света */

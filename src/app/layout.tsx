@@ -1,18 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Lora } from "next/font/google";
 import { AudioProvider } from "@/components/AudioProvider";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+// Одна серифная гарнитура на весь сайт: заголовки, текст, кнопки, плеер.
+// Lora вариативная (400–700) и с курсивом, кириллица читается и на мелких размерах.
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
-});
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin", "cyrillic"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ru"
-      className={`${cormorant.variable} ${manrope.variable} h-full antialiased`}
+      className={`${lora.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <AudioProvider>{children}</AudioProvider>

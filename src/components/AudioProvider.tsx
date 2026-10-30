@@ -10,9 +10,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { nextStatus, type AudioEvent, type AudioStatus } from "@/lib/audio-state";
-
-const SRC = "/we-fell-in-love-in-october.mp3";
+import { track } from "@/content/track";
+import { createAudioController, type AudioController } from "@/lib/audio-controller";
+import type { AudioStatus } from "@/lib/audio-state";
 
 type AudioApi = {
   status: AudioStatus;
@@ -35,71 +35,34 @@ export function useAudio(): AudioApi {
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AudioStatus>("idle");
   const [progress, setProgress] = useState(0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const statusRef = useRef<AudioStatus>("idle");
-
-  const dispatch = useCallback((event: AudioEvent) => {
-    const next = nextStatus(statusRef.current, event);
-    statusRef.current = next;
-    setStatus(next);
-  }, []);
+  const controllerRef = useRef<AudioController | null>(null);
 
   useEffect(() => {
     const audio = new Audio();
     audio.loop = true;
     audio.preload = "none";
-    audio.src = SRC;
-    audioRef.current = audio;
-
-    const onError = () => dispatch("fail");
-    const onTime = () => {
-      if (audio.duration > 0 && isFinite(audio.duration)) {
-        setProgress(Math.min(1, audio.currentTime / audio.duration));
-      }
-    };
-    audio.addEventListener("error", onError);
-    audio.addEventListener("timeupdate", onTime);
-    const onPause = () => dispatch("externalPause");
-    const onPlay = () => dispatch("externalPlay");
-    audio.addEventListener("pause", onPause);
-    audio.addEventListener("play", onPlay);
+    audio.src = track.src;
+    const controller = createAudioController(audio, {
+      onStatus: setStatus,
+      onProgress: setProgress,
+    });
+    controllerRef.current = controller;
 
     return () => {
-      audio.removeEventListener("error", onError);
-      audio.removeEventListener("timeupdate", onTime);
-      audio.removeEventListener("pause", onPause);
-      audio.removeEventListener("play", onPlay);
+      controller.dispose();
       audio.pause();
       audio.removeAttribute("src");
-      audioRef.current = null;
+      controllerRef.current = null;
     };
-  }, [dispatch]);
+  }, []);
 
   const start = useCallback(async () => {
-    const audio = audioRef.current;
-    if (!audio || statusRef.current === "error") return;
-    try {
-      await audio.play();
-      dispatch("start");
-    } catch {
-      dispatch("fail");
-    }
-  }, [dispatch]);
+    await controllerRef.current?.start();
+  }, []);
 
   const toggle = useCallback(() => {
-    const audio = audioRef.current;
-    const current = statusRef.current;
-    if (!audio || current === "idle" || current === "error") return;
-    if (current === "playing") {
-      audio.pause();
-      dispatch("toggle");
-    } else {
-      audio.play().then(
-        () => dispatch("toggle"),
-        () => dispatch("fail"),
-      );
-    }
-  }, [dispatch]);
+    controllerRef.current?.toggle();
+  }, []);
 
   const value = useMemo(
     () => ({ status, progress, start, toggle }),

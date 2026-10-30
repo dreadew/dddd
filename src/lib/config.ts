@@ -5,6 +5,11 @@ export function getHerName(raw?: string): string {
   return name;
 }
 
+// Предлоги и союзы из одной-двух букв не остаются висеть в конце строки:
+// пробел после них становится неразрывным.
+const SHORT_WORD = /(?<=^|[\s«(])([а-яёa-z]{1,2}) +/giu;
+
 export function fillName(text: string, name: string): string {
-  return text.split("{name}").join(name);
+  const filled = text.split("{name}").join(name);
+  return filled.replace(SHORT_WORD, "$1\u00a0");
 }

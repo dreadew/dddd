@@ -10,45 +10,79 @@ const HORIZON = 120;
 // Фонари набережной слева
 const lamps = [18, 54, 90, 126];
 
-// Складчатая крыша театра Камала: зубцы поднимаются к середине и опускаются
-const roofPeaks = [
-  [204, 82],
-  [228, 74],
-  [252, 66],
-  [276, 62],
-  [300, 66],
-  [324, 76],
-];
-
-function roofPath() {
-  const left = 190;
-  const right = 346;
-  const base = 94;
-  let d = `M${left} ${base}`;
-  roofPeaks.forEach(([x, y]) => {
-    d += ` L${x} ${y} L${x + 12} ${base}`;
-  });
-  d += ` L${right} ${base} Z`;
-  return d;
-}
-
-// Окна театра: два ряда; часть горит теплым, часть тихо мерцает
-const windows = Array.from({ length: 2 }, (_, row) =>
-  Array.from({ length: 12 }, (_, col) => ({
-    x: 198 + col * 12,
-    y: 100 + row * 9,
-    lit: (col + row * 5) % 4 !== 0,
-    flicker: (col * 7 + row * 3) % 5 === 0,
-  })),
-).flat();
-
-// Далёкие дома на том берегу
+// Далёкие дома на том берегу: [x, y верхушки, ширина]; часть окон тихо мерцает
 const skyline = [
   [150, 108, 8],
   [160, 102, 10],
   [172, 110, 7],
   [180, 104, 8],
+  [196, 109, 9],
+  [212, 104, 7],
+  [226, 111, 10],
+  [244, 106, 8],
+  [262, 110, 9],
+  [284, 103, 8],
+  [300, 108, 10],
+  [318, 105, 7],
+  [334, 110, 9],
 ];
+
+// Утки на воде: [x, y ватерлинии, масштаб, отражение по горизонтали]
+const ducks: [number, number, number, boolean][] = [
+  [196, 160, 2, false],
+  [238, 172, 1.6, false],
+  [310, 150, 1.3, true],
+];
+
+// Силуэт утки, клюв смотрит вправо; ватерлиния на y = 0
+function Duck({ x, y, scale, flip, index, animate }: { x: number; y: number; scale: number; flip: boolean; index: number; animate: boolean }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${flip ? -scale : scale} ${scale})`}>
+      {/* Круги на воде вокруг утки */}
+      <ellipse
+        cx="0"
+        cy="0.6"
+        rx="13"
+        ry="1.6"
+        fill="none"
+        stroke="#f3e9dc"
+        strokeOpacity="0.18"
+        strokeWidth="0.6"
+        className={animate ? "places-shimmer" : undefined}
+        style={{ animationDelay: `${index * 1.1}s` }}
+      />
+      <ellipse
+        cx="0"
+        cy="1"
+        rx="19"
+        ry="2.4"
+        fill="none"
+        stroke="#f3e9dc"
+        strokeOpacity="0.1"
+        strokeWidth="0.6"
+        className={animate ? "places-shimmer" : undefined}
+        style={{ animationDelay: `${index * 1.1 + 1.6}s` }}
+      />
+      <g className={animate ? "duck-bob" : undefined} style={{ animationDelay: `${index * 0.9}s` }}>
+        {/* Хвост, тело, шея, голова */}
+        <path
+          d="M-10 -6.5 L-6 -3.5 Q-8.5 0.4 -3 0.4 L5 0.4 Q9 0.4 8.6 -3 Q8 -5.4 5.4 -5.6 Q6.6 -7.6 6.6 -9.2 Q6.6 -12 4 -12 Q1.4 -12 1.4 -9.4 Q1.4 -7.6 2.4 -5.8 L-4 -5.6 Z"
+          fill="#0d0f28"
+          stroke="#f7c08a"
+          strokeOpacity="0.55"
+          strokeWidth="0.45"
+          strokeLinejoin="round"
+        />
+        {/* Клюв */}
+        <path d="M6.4 -10.2 L9.6 -9.4 L6.5 -8.4 Z" fill="#f4a259" opacity="0.8" />
+        {/* Глаз */}
+        <circle cx="4.6" cy="-9.9" r="0.55" fill="#f7c08a" opacity="0.8" />
+      </g>
+      {/* Отражение утки */}
+      <ellipse cx="0" cy="2.4" rx="8" ry="1" fill="#f7c08a" opacity="0.08" />
+    </g>
+  );
+}
 
 export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "name">) {
   const reduced = useReducedMotion();
@@ -87,7 +121,7 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
             </linearGradient>
           </defs>
 
-          {/* Озеро Кабан */}
+          {/* Вода */}
           <motion.g {...fade(0.1)}>
             <rect x="0" y={HORIZON} width="360" height={200 - HORIZON} fill="url(#places-water)" />
             {[132, 146, 162, 180].map((y, i) => (
@@ -111,7 +145,16 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
             {skyline.map(([x, y, w], i) => (
               <g key={i}>
                 <rect x={x} y={y} width={w} height={HORIZON - y} fill="#16153a" />
-                <rect x={x + 3} y={y + 4} width="2" height="2" fill="#f7c08a" opacity="0.5" />
+                <rect
+                  x={x + 3}
+                  y={y + 4}
+                  width="2"
+                  height="2"
+                  fill="#f7c08a"
+                  opacity="0.5"
+                  className={i % 4 === 1 && !reduced ? "places-flicker" : undefined}
+                  style={{ animationDelay: `${(i % 5) * 1.3}s` }}
+                />
               </g>
             ))}
           </motion.g>
@@ -151,25 +194,11 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
             ))}
           </motion.g>
 
-          {/* Театр Камала со складчатой крышей */}
+          {/* Утки, которых мы встречали там каждый раз */}
           <motion.g {...fade(0.9)}>
-            <path d={roofPath()} fill="#17163a" stroke="#f7c08a" strokeOpacity="0.25" strokeWidth="0.8" strokeLinejoin="round" />
-            <rect x="190" y="94" width="156" height="26" fill="#121131" />
-            {windows.map((w, i) => (
-              <rect
-                key={i}
-                x={w.x}
-                y={w.y}
-                width="6"
-                height="5"
-                rx="0.5"
-                fill={w.lit ? "#f7c08a" : "#2a2550"}
-                opacity={w.lit ? 0.85 : 1}
-                className={w.lit && w.flicker && !reduced ? "places-flicker" : undefined}
-                style={w.flicker ? { animationDelay: `${(i % 5) * 1.3}s` } : undefined}
-              />
+            {ducks.map(([x, y, scale, flip], i) => (
+              <Duck key={i} x={x} y={y} scale={scale} flip={flip} index={i} animate={!reduced} />
             ))}
-            <rect x="190" y={HORIZON + 2} width="156" height="22" fill="url(#places-reflect)" opacity="0.35" />
           </motion.g>
         </svg>
       </div>
