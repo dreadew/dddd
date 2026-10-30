@@ -35,7 +35,10 @@ type Crown = [number, number, number];
 
 function crownsPath(crowns: Crown[]) {
   return crowns
-    .map(([x, y, r]) => `M${x - r} ${y} a${r} ${r} 0 1 0 ${r * 2} 0 a${r} ${r} 0 1 0 ${-r * 2} 0 Z`)
+    .map(
+      ([x, y, r]) =>
+        `M${x - r} ${y} a${r} ${r} 0 1 0 ${r * 2} 0 a${r} ${r} 0 1 0 ${-r * 2} 0 Z`,
+    )
     .join(" ");
 }
 
@@ -212,7 +215,13 @@ function Houses({ houses }: { houses: House[] }) {
   );
 }
 
-function Lights({ list, size }: { list: [number, number, boolean][]; size: number }) {
+function Lights({
+  list,
+  size,
+}: {
+  list: [number, number, boolean][];
+  size: number;
+}) {
   return (
     <>
       {list.map(([x, y, flicker], i) => (
@@ -243,7 +252,11 @@ export function DreamScene() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={reduced ? { duration: 0.3 } : { duration: 1.8, delay: 0.2, ease: "easeOut" }}
+      transition={
+        reduced
+          ? { duration: 0.3 }
+          : { duration: 1.8, delay: 0.2, ease: "easeOut" }
+      }
     >
       <svg
         ref={svgRef}
@@ -317,9 +330,15 @@ export function DreamScene() {
           <g
             key={i}
             className={s.twinkle ? "night-twinkle" : undefined}
-            style={s.twinkle ? { animationDelay: `${s.delay}s`, animationDuration: "7s" } : undefined}
+            style={
+              s.twinkle
+                ? { animationDelay: `${s.delay}s`, animationDuration: "7s" }
+                : undefined
+            }
           >
-            {s.r > 1 && <circle cx={s.x} cy={s.y} r="3.2" fill="url(#night-star-halo)" />}
+            {s.r > 1 && (
+              <circle cx={s.x} cy={s.y} r="3.2" fill="url(#night-star-halo)" />
+            )}
             <circle cx={s.x} cy={s.y} r={s.r} fill="#f3e9dc" opacity={s.o} />
           </g>
         ))}
@@ -353,31 +372,75 @@ export function DreamScene() {
         <path d={pinesPath(farLeftForest, BANK + 1)} fill="#0e0c26" />
 
         {/* Городки на том берегу и церковь */}
-        <path d={`M112 ${BANK + 2} Q180 90 250 92 Q290 93 ${W} 91 L${W} ${BANK + 2} Z`} fill="#17153a" />
+        <path
+          d={`M112 ${BANK + 2} Q180 90 250 92 Q290 93 ${W} 91 L${W} ${BANK + 2} Z`}
+          fill="#17153a"
+        />
         <Houses houses={townNear} />
         <Houses houses={townChurch} />
         <g fill="#17153a">
           {/* Колокольня со шпилем и купол рядом */}
           <rect x="244" y="74" width="7" height={BANK - 74} />
           <path d="M243.5 74 L247.5 62 L251.5 74 Z" />
-          <line x1="247.5" y1="62" x2="247.5" y2="57.5" stroke="#17153a" strokeWidth="0.7" />
-          <line x1="245.6" y1="59.4" x2="249.4" y2="59.4" stroke="#17153a" strokeWidth="0.6" />
+          <line
+            x1="247.5"
+            y1="62"
+            x2="247.5"
+            y2="57.5"
+            stroke="#17153a"
+            strokeWidth="0.7"
+          />
+          <line
+            x1="245.6"
+            y1="59.4"
+            x2="249.4"
+            y2="59.4"
+            stroke="#17153a"
+            strokeWidth="0.6"
+          />
           <path d="M252 86 Q252 80.5 256 80.5 Q260 80.5 260 86 Z" />
           <rect x="252" y="86" width="8" height={BANK - 86} />
         </g>
-        <rect x="246.6" y="78" width="1.8" height="2.8" fill="#f7c08a" fillOpacity="0.55" />
+        <rect
+          x="246.6"
+          y="78"
+          width="1.8"
+          height="2.8"
+          fill="#f7c08a"
+          fillOpacity="0.55"
+        />
         <Lights list={windows} size={1.4} />
 
         {/* Туманная дымка над тем берегом */}
         <rect x="0" y="70" width={W} height="34" fill="url(#night-haze)" />
 
         {/* Река */}
-        <rect x="0" y={BANK + 2} width={W} height={SHORE - BANK + 6} fill="url(#night-water)" />
+        <rect
+          x="0"
+          y={BANK + 2}
+          width={W}
+          height={SHORE - BANK + 6}
+          fill="url(#night-water)"
+        />
         {/* Отражение зарева и огоньков */}
         <g className="night-glow">
-          <ellipse cx="72" cy={BANK + 2} rx="40" ry="16" fill="url(#night-reflect)" clipPath="url(#night-water-clip)" />
+          <ellipse
+            cx="72"
+            cy={BANK + 2}
+            rx="40"
+            ry="16"
+            fill="url(#night-reflect)"
+            clipPath="url(#night-water-clip)"
+          />
           {[60, 67, 75, 82].map((x, i) => (
-            <rect key={x} x={x} y={BANK + 3} width="1.4" height={14 + (i % 2) * 8} fill="url(#night-streak)" />
+            <rect
+              key={x}
+              x={x}
+              y={BANK + 3}
+              width="1.4"
+              height={14 + (i % 2) * 8}
+              fill="url(#night-streak)"
+            />
           ))}
         </g>
         {[138, 148, 158, 168, 179, 226, 236, 259, 269].map((x, i) => (
@@ -415,9 +478,24 @@ export function DreamScene() {
 
         {/* Лес внизу под обрывом: кроны далеко внизу, в дымке */}
         <path d={crownsPath(valleyFar)} fill="url(#night-valley)" />
-        <rect x="0" y={SHORE + 8} width={W} height={H - SHORE - 8} fill="#100f2a" />
-        <g className="night-mist" style={{ animationDuration: "29s", animationDelay: "-9s" }}>
-          <ellipse cx="170" cy={SHORE + 12} rx="120" ry="7" fill="url(#night-mist)" />
+        <rect
+          x="0"
+          y={SHORE + 8}
+          width={W}
+          height={H - SHORE - 8}
+          fill="#100f2a"
+        />
+        <g
+          className="night-mist"
+          style={{ animationDuration: "29s", animationDelay: "-9s" }}
+        >
+          <ellipse
+            cx="170"
+            cy={SHORE + 12}
+            rx="120"
+            ry="7"
+            fill="url(#night-mist)"
+          />
         </g>
         <path d={pinesPath(valleyMidPines, SHORE + 22)} fill="#141233" />
         <path d={crownsPath(valleyMid)} fill="#141233" />
@@ -435,11 +513,23 @@ export function DreamScene() {
         </g>
         <path d={LEDGE} fill="url(#night-ledge)" />
         {/* Тёплый отсвет на самой кромке */}
-        <path d={LIP} fill="none" stroke="#f7c08a" strokeOpacity="0.22" strokeWidth="0.8" />
+        <path
+          d={LIP}
+          fill="none"
+          stroke="#f7c08a"
+          strokeOpacity="0.22"
+          strokeWidth="0.8"
+        />
         {/* Трава и камешки у края */}
         <g stroke="#0d0c24" strokeWidth="0.8" strokeLinecap="round">
           {[70, 74, 96, 100, 176, 180, 184].map((x, i) => (
-            <line key={x} x1={x} y1={163 - (x > 150 ? 2 : 0)} x2={x + (i % 2 ? 1.5 : -1.5)} y2={158 - (x > 150 ? 2 : 0)} />
+            <line
+              key={x}
+              x1={x}
+              y1={163 - (x > 150 ? 2 : 0)}
+              x2={x + (i % 2 ? 1.5 : -1.5)}
+              y2={158 - (x > 150 ? 2 : 0)}
+            />
           ))}
         </g>
         <ellipse cx="186" cy="163.5" rx="4" ry="2" fill="#0d0c24" />
@@ -452,31 +542,45 @@ export function DreamScene() {
             <line x1="215" y1="179" x2="215.5" y2="189" strokeWidth="1.6" />
             <line x1="185" y1="183" x2="186" y2="191.5" strokeWidth="1.3" />
             <line x1="219" y1="182.5" x2="220" y2="190.5" strokeWidth="1.3" />
-            {/* Спинка из двух реек */}
-            <line x1="179" y1="172.5" x2="217" y2="172" strokeWidth="2" />
-            <line x1="179" y1="176.5" x2="217" y2="176" strokeWidth="2" />
-            {/* Столбики спинки */}
-            <line x1="181" y1="171" x2="181" y2="181" strokeWidth="1.6" />
-            <line x1="215" y1="170.5" x2="215" y2="181" strokeWidth="1.6" />
-            {/* Сиденье, уходящее вперёд, и подлокотник */}
-            <path d="M179 181 L217 180.5 L221 182.5 L184 183.2 Z" fill="#06071a" strokeWidth="0.8" />
-            <line x1="215" y1="175.5" x2="219.5" y2="178" strokeWidth="1.2" />
+            {/* Сиденье: почти сливается с фоном, только легкий намек на форму */}
+            <path
+              d="M179 180 L217 179.5 L221 181.5 L184 182.2 Z"
+              fill="#0d0e26"
+              stroke="#f7c08a"
+              strokeOpacity="0.12"
+              strokeWidth="0.4"
+            />
+            <line x1="215" y1="174.5" x2="219.5" y2="177" stroke="#0d0e26" strokeWidth="1.2" />
           </g>
-          {/* Тёплый контур, чтобы лавочка читалась на фоне леса внизу */}
-          <g stroke="#f7c08a" strokeOpacity="0.4" strokeWidth="0.45" fill="none" strokeLinecap="round">
-            <line x1="179" y1="171.5" x2="217" y2="171" />
-            <line x1="179" y1="175.5" x2="217" y2="175" />
-            <line x1="181" y1="170" x2="181" y2="171.5" />
-            <line x1="215" y1="169.5" x2="215" y2="171" />
-            <line x1="217" y1="180.3" x2="221" y2="182.3" />
+          {/* Минимальный блик на самом краю */}
+          <g
+            stroke="#f7c08a"
+            strokeOpacity="0.15"
+            strokeWidth="0.4"
+            fill="none"
+            strokeLinecap="round"
+          >
+            <line x1="217" y1="179.3" x2="221" y2="181.3" />
           </g>
         </g>
 
         {/* Лес вокруг: высокие ели обступают уступ с обеих сторон */}
         <path d={pinesPath(frameRight, H + 2)} fill="#08091c" />
-        <path d={crownsPath([[236, 206, 16], [222, 214, 12]])} fill="#08091c" />
+        <path
+          d={crownsPath([
+            [236, 206, 16],
+            [222, 214, 12],
+          ])}
+          fill="#08091c"
+        />
         <path d={pinesPath(frameLeft, H + 2)} fill="#07081a" />
-        <path d={crownsPath([[78, 210, 15], [96, 216, 11]])} fill="#07081a" />
+        <path
+          d={crownsPath([
+            [78, 210, 15],
+            [96, 216, 11],
+          ])}
+          fill="#07081a"
+        />
       </svg>
     </motion.div>
   );

@@ -21,7 +21,7 @@ export function ChapterShell({
       id={chapter.id}
       tabIndex={-1}
       aria-labelledby={`${chapter.id}-title`}
-      className="flex min-h-dvh outline-none snap-start flex-col justify-center px-6 pt-16 pb-[calc(7rem+env(safe-area-inset-bottom))]"
+      className="flex h-dvh outline-none snap-start flex-col justify-center px-6 pt-16 pb-[calc(7rem+env(safe-area-inset-bottom))]"
     >
       <motion.div
         className="mx-auto flex w-full max-w-md flex-col gap-8"

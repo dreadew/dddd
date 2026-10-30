@@ -26,17 +26,18 @@ export type AudioController = {
   getTrack(): TrackKind;
   start(): Promise<void>;
   toggle(): void;
-  // Глава с отрывком на экране: если музыка играет, один раз включить отрывок.
   enterClip(): void;
-  // Ушла из главы: оборвать отрывок и вернуть основной трек.
   exitClip(): void;
+  setMuffle(enabled: boolean): void;
   dispose(): void;
 };
 
 const isAbort = (err: unknown) => err instanceof DOMException && err.name === "AbortError";
 
 export function createAudioController(
-  audio: AudioLike,
+  audio: HTMLMediaElement,
+  context: AudioContext,
+  filter: BiquadFilterNode,
   handlers: {
     onStatus(status: AudioStatus): void;
     onProgress?(progress: number): void;
@@ -46,6 +47,10 @@ export function createAudioController(
 ): AudioController {
   let status: AudioStatus = "idle";
   let disposed = false;
+
+  const source = context.createMediaElementSource(audio);
+  source.connect(filter);
+  filter.connect(context.destination);
 
   // Отрывок: pending -> (clip) -> done. Играет не больше одного раза за визит.
   const clip = tracks?.clip && tracks.clip.duration > 0 ? tracks.clip : undefined;
@@ -168,6 +173,7 @@ export function createAudioController(
     async start() {
       if (status === "error") return;
       try {
+        if (context.state === "suspended") await context.resume();
         await audio.play();
         dispatch("start");
       } catch {
@@ -231,6 +237,11 @@ export function createAudioController(
 
     exitClip() {
       backToMain();
+    },
+
+    setMuffle(enabled: boolean) {
+      filter.type = enabled ? "lowpass" : "allpass";
+      filter.frequency.setValueAtTime(enabled ? 500 : 20000, context.currentTime);
     },
 
     dispose() {

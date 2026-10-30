@@ -27,6 +27,7 @@ type AudioApi = {
   toggle(): void;
   enterClip(): void;
   exitClip(): void;
+  setMuffle(enabled: boolean): void;
 };
 
 const AudioContext_ = createContext<AudioApi>({
@@ -37,6 +38,7 @@ const AudioContext_ = createContext<AudioApi>({
   toggle: () => {},
   enterClip: () => {},
   exitClip: () => {},
+  setMuffle: () => {},
 });
 
 export function useAudio(): AudioApi {
@@ -54,8 +56,16 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     audio.loop = true;
     audio.preload = "none";
     audio.src = track.src;
+
+    const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const filter = context.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.value = 20000;
+
     const controller = createAudioController(
       audio,
+      context,
+      filter,
       {
         onStatus: setStatus,
         onProgress: setProgress,
@@ -67,6 +77,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       { mainSrc: track.src, clip: featuredClip },
     );
     controllerRef.current = controller;
+    controller.setMuffle(true);
 
     return () => {
       controller.dispose();
@@ -92,9 +103,13 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     controllerRef.current?.exitClip();
   }, []);
 
+  const setMuffle = useCallback((enabled: boolean) => {
+    controllerRef.current?.setMuffle(enabled);
+  }, []);
+
   const value = useMemo(
-    () => ({ status, progress, track: current, start, toggle, enterClip, exitClip }),
-    [status, progress, current, start, toggle, enterClip, exitClip],
+    () => ({ status, progress, track: current, start, toggle, enterClip, exitClip, setMuffle }),
+    [status, progress, current, start, toggle, enterClip, exitClip, setMuffle],
   );
 
   return <AudioContext_.Provider value={value}>{children}</AudioContext_.Provider>;

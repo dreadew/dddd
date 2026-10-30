@@ -412,23 +412,23 @@ export function DateScene() {
         <path d={merlons(218, 111, 252, 114, 2.6)} fill="#e6d3ae" />
 
         {/* Центр: три острых щипца в ракурсе, средний выше всех, правый дальше и меньше */}
-        <path d="M116 96 L224 106 L224 178 L116 178 Z" fill="url(#date-cream)" />
-        <path d="M114 98 L132 56 L150 100 Z" fill="url(#date-cream)" />
-        <path d="M190 104 L206 66 L222 106 Z" fill="url(#date-cream)" />
-        <path d="M140 101 L168 34 L196 104 Z" fill="url(#date-cream)" />
+        <path d="M116 105 L224 115 L224 178 L116 178 Z" fill="url(#date-cream)" opacity="0.8" />
+        <path d="M114 107 L132 65 L150 109 Z" fill="url(#date-cream)" opacity="0.8" />
+        <path d="M190 113 L206 75 L222 113 Z" fill="url(#date-cream)" opacity="0.8" />
+        <path d="M140 110 L168 43 L196 113 Z" fill="url(#date-cream)" opacity="0.8" />
         {/* Золотой узор по щипцам */}
-        <g fill="none" stroke="#e0a94a" strokeWidth="1" strokeLinejoin="round">
-          <path d="M119 97 L132 64 L145 99" />
-          <path d="M195 104 L206 74 L217 105" />
-          <path d="M145 101 L168 43 L191 103" />
-          <path d="M126 88 Q132 79 138 89" />
-          <path d="M200 96 Q206 88 212 97" />
-          <path d="M154 62 Q160 54 168 58 Q176 55 182 63" strokeWidth="1.3" />
-          <path d="M158 67 Q168 59 178 68" />
+        <g fill="none" stroke="#e0a94a" strokeWidth="0.8" strokeLinejoin="round" opacity="0.7">
+          <path d="M119 106 L132 73 L145 108" />
+          <path d="M195 113 L206 83 L217 114" />
+          <path d="M145 110 L168 47 L191 112" />
+          <path d="M126 97 Q132 88 138 98" />
+          <path d="M200 105 Q206 97 212 106" />
+          <path d="M154 71 Q160 63 168 67 Q176 64 182 72" strokeWidth="1.1" />
+          <path d="M158 76 Q168 68 178 77" />
         </g>
-        <path d="M140 101 L168 34 L196 104" fill="none" stroke="#8d7656" strokeWidth="0.8" />
-        <path d="M114 98 L132 56 L150 100" fill="none" stroke="#8d7656" strokeWidth="0.8" />
-        <path d="M190 104 L206 66 L222 106" fill="none" stroke="#8d7656" strokeWidth="0.8" />
+        <path d="M140 110 L168 43 L196 113" fill="none" stroke="#8d7656" strokeWidth="0.6" />
+        <path d="M114 107 L132 65 L150 109" fill="none" stroke="#8d7656" strokeWidth="0.6" />
+        <path d="M190 113 L206 75 L222 113" fill="none" stroke="#8d7656" strokeWidth="0.6" />
         {/* Шпили-навершия на щипцах */}
         {[
           [132, 56, 7],

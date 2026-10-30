@@ -57,9 +57,47 @@ body {
   text-shadow: 0 1px 12px rgb(0 0 0 / 0.6);
 }
 
-/* Скролл глав: proximity не запирает главы выше экрана */
 html:has([data-snap]) {
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, var(--night-top) 0%, var(--night-bottom) 100%) fixed;
+  color: var(--foreground);
+  font-family: var(--font-lora), Georgia, serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html:has([data-snap]) {
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, var(--night-top) 0%, var(--night-bottom) 100%) fixed;
+  color: var(--foreground);
+  font-family: var(--font-lora), Georgia, serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html:has([data-snap]) {
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, var(--night-top) 0%, var(--night-bottom) 100%) fixed;
+  color: var(--foreground);
+  font-family: var(--font-lora), Georgia, serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+main[data-snap] {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  overflow-y: visible;
 }
 
 @keyframes star-twinkle {

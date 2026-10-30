@@ -88,7 +88,8 @@ describe("убранное из текстов", () => {
   ];
 
   it("нет Кабана, театра Камала, старого вопроса, первой ночи и старого трека", () => {
-    for (const text of allCopy) for (const re of banned) expect(text).not.toMatch(re);
+    for (const text of allCopy)
+      for (const re of banned) expect(text).not.toMatch(re);
   });
 });
 
@@ -137,6 +138,10 @@ describe("разговор и финал", () => {
 
 describe("трек", () => {
   it("название, исполнитель и файл из public/", () => {
-    expect(track).toEqual({ title: "Sweet Creature", artist: "Harry Styles", src: "/sweet-creature.mp3" });
+    expect(track).toEqual({
+      title: "Adore You",
+      artist: "Harry Styles",
+      src: "/adore-you.mp3",
+    });
   });
 });
