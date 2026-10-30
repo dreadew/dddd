@@ -46,3 +46,24 @@ body {
   color: var(--foreground);
   text-shadow: 0 1px 12px rgb(0 0 0 / 0.6);
 }
+
+/* Скролл глав: proximity не запирает главы выше экрана */
+html:has([data-snap]) {
+  scroll-snap-type: y proximity;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(0.7); }
+}
+
+.star-twinkle {
+  opacity: 0.85;
+  animation-name: star-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star-twinkle { animation: none; }
+}
