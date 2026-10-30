@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fillName } from "@/lib/config";
-import { chapters, finaleLines, questionText, talkQuestions } from "./chapters";
+import { chapters, finaleLines, questionText, talkQuestions, talkReactions } from "./chapters";
 
 const order = ["evening", "talk", "places", "night", "question", "finale"];
 
@@ -40,6 +40,14 @@ describe("questionText и прочее", () => {
   it("два вопроса в разговоре, по два варианта", () => {
     expect(talkQuestions).toHaveLength(2);
     for (const q of talkQuestions) expect(q.options).toHaveLength(2);
+  });
+
+  it("на каждый вариант разговора есть реакция", () => {
+    expect(talkReactions).toHaveLength(talkQuestions.length);
+    for (const r of talkReactions) {
+      expect(r).toHaveLength(2);
+      for (const text of r) expect(text.trim()).not.toBe("");
+    }
   });
 
   it("финал не пустой", () => {

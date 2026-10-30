@@ -67,3 +67,29 @@ html:has([data-snap]) {
 @media (prefers-reduced-motion: reduce) {
   .star-twinkle { animation: none; }
 }
+
+/* Глава «Наши места»: блики на воде и мерцание окон */
+@keyframes places-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@keyframes places-flicker {
+  0%, 100% { opacity: 0.85; }
+  45% { opacity: 0.85; }
+  50% { opacity: 0.35; }
+  60% { opacity: 0.85; }
+}
+
+.places-shimmer {
+  animation: places-shimmer 4s ease-in-out infinite;
+}
+
+.places-flicker {
+  animation: places-flicker 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .places-shimmer,
+  .places-flicker { animation: none; }
+}

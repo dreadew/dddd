@@ -80,6 +80,18 @@ export const talkQuestions: { prompt: string; options: [string, string] }[] = [
   { prompt: "Ночной город или рассвет?", options: ["Ночной город", "Рассвет"] },
 ];
 
+// Короткая тёплая реакция после выбора: talkReactions[вопрос][вариант].
+export const talkReactions: [string, string][] = [
+  [
+    "Я так и думал. Зато потом всегда мирились.",
+    "Иногда молчать рядом с тобой даже лучше слов.",
+  ],
+  [
+    "Тогда нам точно по пути: огни, Кабан, долгие круги.",
+    "Красиво. Хочется встретить его не в одиночку.",
+  ],
+];
+
 export const questionText: { ask: string; yes: string; no: string; noTeases: string[] } = {
   ask: "Мне очень хорошо, когда {name} рядом. Давай будем вместе? По-настоящему, не только по вечерам.",
   yes: "Да",

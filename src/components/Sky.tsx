@@ -1,7 +1,5 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
-
 type Star = { x: number; y: number; size: number; delay: number; duration: number };
 
 // Детерминированный генератор, чтобы звёзды на сервере и клиенте совпадали.
@@ -34,8 +32,6 @@ const lights = Array.from({ length: LIGHT_COUNT }, (_, i) => ({
 }));
 
 export function Sky() {
-  const reduced = useReducedMotion();
-
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,#0b1026_0%,#1a1838_55%,#3a2a4d_100%)]" />
@@ -43,7 +39,9 @@ export function Sky() {
       {stars.map((star, i) => (
         <span
           key={i}
-          className={`absolute rounded-full bg-[#f3e9dc] ${reduced ? "opacity-70" : "star-twinkle"}`}
+          // Под prefers-reduced-motion мерцание выключает CSS (globals.css): так разметка
+          // на сервере и клиенте совпадает и нет ошибки гидрации.
+          className="star-twinkle absolute rounded-full bg-[#f3e9dc]"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,
