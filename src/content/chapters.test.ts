@@ -41,15 +41,14 @@ describe("chapters", () => {
     for (const c of chapters) expect(c.title).not.toMatch(/глава|финал\./i);
   });
 
-  it("хотя бы в одном тексте глав есть {name}", () => {
+  // {name} в текстах необязателен: автор может писать «ты» прямо.
+  it("{name}, если он есть в текстах глав, подставляется fillName", () => {
     const all = chapters.flatMap((c) => [c.title, c.subtitle ?? "", ...c.lines]);
-    expect(all.some((t) => t.includes("{name}"))).toBe(true);
-  });
-
-  it("{name} подставляется fillName", () => {
-    const line = chapters.flatMap((c) => c.lines).find((l) => l.includes("{name}"))!;
-    expect(fillName(line, "Аня")).not.toContain("{name}");
-    expect(fillName(line, getHerName(undefined))).toContain("ты");
+    for (const text of all.filter((t) => t.includes("{name}"))) {
+      expect(fillName(text, "Аня")).not.toContain("{name}");
+      expect(fillName(text, getHerName(undefined))).toContain("ты");
+    }
+    expect(fillName("мне снилась {name}.", "Аня")).toContain("Аня");
   });
 
   it("знакомство начинается с пиццы и Смешариков", () => {
