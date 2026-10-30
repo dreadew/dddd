@@ -24,7 +24,7 @@ export function Night({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "nam
   );
 
   return (
-    <div ref={ref} className="relative isolate flex flex-col gap-6 text-center">
+    <div ref={ref} className="relative isolate flex flex-col gap-4 text-center">
       {typeof document !== "undefined" && createPortal(dim, document.body)}
 
       {/* Мягкий тёплый свет, который медленно «дышит» */}
@@ -44,7 +44,7 @@ export function Night({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "nam
         }
       />
 
-      {/* Тот самый сон: холм, лавочка, река и зарево завода вдали */}
+      {/* Тот самый сон: лавочка на краю обрыва в лесу, река и зарево завода вдали */}
       <DreamScene />
 
       {chapter.lines.map((line, i) => (

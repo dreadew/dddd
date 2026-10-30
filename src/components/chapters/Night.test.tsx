@@ -25,6 +25,21 @@ describe("Night", () => {
     for (const id of ids) expect(id).toMatch(/^night-/);
   });
 
+  it("кадр выше прежнего ландшафтного 360x204, чтобы читался на телефоне", () => {
+    const [, , w, h] = html.match(/viewBox="([^"]+)"/)![1].split(/\s+/).map(Number);
+    expect(h / w).toBeGreaterThan(204 / 360);
+  });
+
+  it("анимации сцены на месте: окна мерцают, зарево дышит, туман плывёт", () => {
+    expect(html).toContain('class="night-twinkle"');
+    expect(html).toContain('class="night-glow"');
+    expect(html).toContain('class="night-mist"');
+  });
+
+  it("картинка стоит перед текстом", () => {
+    expect(html.indexOf("<svg")).toBeLessThan(html.indexOf("<p"));
+  });
+
   it("все строки главы на месте", () => {
     const paragraphs = html.match(/<p[\s>]/g) ?? [];
     expect(paragraphs).toHaveLength(chapter.lines.length);
