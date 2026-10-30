@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
 import { fillName } from "@/lib/config";
 import type { ChapterBodyProps } from "./types";
 
@@ -51,6 +52,8 @@ const skyline = [
 
 export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "name">) {
   const reduced = useReducedMotion();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const onScreen = useInView(svgRef);
 
   const fade = (delay: number) => ({
     initial: { opacity: 0 },
@@ -63,8 +66,9 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
     <div className="flex flex-col gap-6">
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgb(11_16_38/0.2),rgb(58_42_77/0.45))]">
         <svg
+          ref={svgRef}
           viewBox="0 46 360 150"
-          className="block h-auto w-full"
+          className={`block h-auto w-full ${onScreen ? "" : "places-paused"}`}
           aria-hidden="true"
           focusable="false"
         >

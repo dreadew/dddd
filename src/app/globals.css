@@ -89,7 +89,19 @@ html:has([data-snap]) {
   animation: places-flicker 6s ease-in-out infinite;
 }
 
+/* Вне экрана анимации стоят, чтобы не греть телефон */
+.places-paused .places-shimmer,
+.places-paused .places-flicker { animation-play-state: paused; }
+
+@keyframes scroll-cue {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+.scroll-cue-chevron { animation: scroll-cue 2s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
+  .scroll-cue-chevron { animation: none; }
   .places-shimmer,
   .places-flicker { animation: none; }
 }

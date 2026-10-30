@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fillName } from "@/lib/config";
+import { fillName, getHerName } from "@/lib/config";
 import { chapters, finaleLines, questionText, talkQuestions, talkReactions } from "./chapters";
 
 const order = ["evening", "talk", "places", "night", "question", "finale"];
@@ -26,6 +26,19 @@ describe("chapters", () => {
   it("{name} подставляется fillName", () => {
     const line = chapters.flatMap((c) => c.lines).find((l) => l.includes("{name}"))!;
     expect(fillName(line, "Аня")).not.toContain("{name}");
+  });
+});
+
+describe("защита от спойлеров", () => {
+  it("текст предложения не встречается в других главах", () => {
+    for (const c of chapters.filter((c) => c.id !== "question")) {
+      expect(c.lines).not.toContain(questionText.ask);
+      expect(c.lines.join("\n")).not.toContain(questionText.ask);
+    }
+  });
+
+  it("имя из одних пробелов превращается в «ты»", () => {
+    expect(getHerName("   ")).toBe("ты");
   });
 });
 

@@ -161,9 +161,8 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
             ref={yesRef}
             type="button"
             onClick={sayYes}
-            aria-pressed={said}
             animate={{ scale: yesScale }}
-            transition={{ type: "spring", stiffness: 300, damping: 18 }}
+            transition={{ type: "spring", stiffness: 300, damping: 32 }}
             className="relative z-10 min-h-14 min-w-32 rounded-full border border-[#f4a259] bg-[#f4a259] px-8 py-3 text-lg font-semibold text-[#0b1026] shadow-[0_0_24px_rgb(244_162_89/0.45)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7c08a] active:bg-[#f7c08a]"
           >
             {questionText.yes}

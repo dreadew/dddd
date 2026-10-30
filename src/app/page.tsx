@@ -60,6 +60,11 @@ export default function Home() {
   const [saidYes, setSaidYes] = useState(false);
   const onYes = useCallback(() => setSaidYes(true), []);
 
+  // После ухода стартового экрана фокус переходит к первой главе, без прокрутки.
+  useEffect(() => {
+    if (started) document.getElementById(chapters[0].id)?.focus({ preventScroll: true });
+  }, [started]);
+
   useEffect(() => {
     if (!saidYes) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

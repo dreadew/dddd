@@ -28,7 +28,7 @@ export function Gate({ onStart }: { onStart: () => void }) {
       >
         Нажми, чтобы начать
       </button>
-      <p className="text-xs opacity-50">лучше со звуком</p>
+      <p className="text-xs opacity-75">лучше со звуком</p>
     </motion.main>
   );
 }
