@@ -34,7 +34,7 @@ body {
 }
 
 /* Одна гарнитура везде: элементы форм по умолчанию шрифт не наследуют.
-   В base-слое, чтобы text-*/font-* утилиты на кнопках по-прежнему работали. */
+   В base-слое, чтобы утилиты text-* и font-* на кнопках по-прежнему работали. */
 @layer base {
   button,
   input,
@@ -127,6 +127,46 @@ html:has([data-snap]) {
 .places-paused .duck-bob,
 .places-paused .places-clip-pulse,
 .places-clip-paused .places-clip-pulse { animation-play-state: paused; }
+
+/* Глава «Сон»: дышащее зарево завода, мерцание далёких окон и звёзд, туман над рекой */
+@keyframes night-glow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes night-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes night-mist {
+  0%, 100% { transform: translateX(-14px); }
+  50% { transform: translateX(14px); }
+}
+
+.night-glow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: night-glow 9s ease-in-out infinite;
+}
+
+.night-twinkle {
+  animation: night-twinkle 5s ease-in-out infinite;
+}
+
+.night-mist {
+  animation: night-mist 22s ease-in-out infinite;
+}
+
+.night-paused .night-glow,
+.night-paused .night-twinkle,
+.night-paused .night-mist { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .night-glow,
+  .night-twinkle,
+  .night-mist { animation: none; }
+}
 
 @keyframes scroll-cue {
   0%, 100% { transform: translateY(0); opacity: 0.5; }

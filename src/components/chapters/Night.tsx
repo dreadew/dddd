@@ -4,6 +4,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { fillName } from "@/lib/config";
+import { DreamScene } from "./DreamScene";
 import type { ChapterBodyProps } from "./types";
 
 export function Night({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "name">) {
@@ -42,6 +43,9 @@ export function Night({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "nam
             : { duration: 7, repeat: Infinity, ease: "easeInOut" }
         }
       />
+
+      {/* Тот самый сон: холм, лавочка, река и зарево завода вдали */}
+      <DreamScene />
 
       {chapter.lines.map((line, i) => (
         <motion.p
