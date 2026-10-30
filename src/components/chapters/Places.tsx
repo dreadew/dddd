@@ -137,91 +137,91 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
             </linearGradient>
           </defs>
 
-          {/* Вода */}
-          <motion.g {...fade(0.1)}>
-            <rect x="0" y={HORIZON} width="360" height={200 - HORIZON} fill="url(#places-water)" />
-            {[132, 146, 162, 180].map((y, i) => (
-              <line
-                key={y}
-                x1={30 + i * 18}
-                x2={330 - i * 22}
-                y1={y}
-                y2={y}
-                stroke="#f3e9dc"
-                strokeOpacity={0.08}
-                strokeWidth="1"
-                className={reduced ? undefined : "places-shimmer"}
-                style={{ animationDelay: `${i * 0.8}s` }}
-              />
-            ))}
-          </motion.g>
+           {/* Вода */}
+           <motion.g {...fade(0.1)}>
+             <rect x="0" y={HORIZON} width="360" height={200 - HORIZON} fill="url(#places-water)" />
+             {[132, 146, 162, 180].map((y, i) => (
+               <line
+                 key={y}
+                 x1={30 + i * 18}
+                 x2={330 - i * 22}
+                 y1={y}
+                 y2={y}
+                 stroke="#f3e9dc"
+                 strokeOpacity={0.08}
+                 strokeWidth="1"
+                 className={reduced ? undefined : "places-shimmer"}
+                 style={{ animationDelay: `${i * 0.8}s` }}
+               />
+             ))}
+           </motion.g>
 
-          {/* Далёкий берег */}
-          <motion.g {...fade(0.3)}>
-            {skyline.map(([x, y, w], i) => (
-              <g key={i}>
-                <rect x={x} y={y} width={w} height={HORIZON - y} fill="#16153a" />
-                <rect
-                  x={x + 3}
-                  y={y + 4}
-                  width="2"
-                  height="2"
-                  fill="#f7c08a"
-                  opacity="0.5"
-                  className={i % 4 === 1 && !reduced ? "places-flicker" : undefined}
-                  style={{ animationDelay: `${(i % 5) * 1.3}s` }}
-                />
-              </g>
-            ))}
-          </motion.g>
+           {/* Далёкий берег */}
+           <motion.g {...fade(0.3)}>
+             {skyline.map(([x, y, w], i) => (
+               <g key={i}>
+                 <rect x={x} y={y} width={w} height={HORIZON - y} fill="#16153a" />
+                 <rect
+                   x={x + 3}
+                   y={y + 4}
+                   width="2"
+                   height="2"
+                   fill="#f7c08a"
+                   opacity="0.5"
+                   className={i % 4 === 1 && !reduced ? "places-flicker" : undefined}
+                   style={{ animationDelay: `${(i % 5) * 1.3}s` }}
+                 />
+               </g>
+             ))}
+           </motion.g>
 
-          {/* Набережная: деревья, перила, фонари и их отражения */}
-          <motion.g {...fade(0.5)}>
-            <ellipse cx="36" cy="100" rx="26" ry="18" fill="#100f2a" />
-            <ellipse cx="108" cy="98" rx="30" ry="20" fill="#100f2a" />
-            <rect x="0" y="114" width="150" height="6" fill="#0a0c20" />
-            <line x1="0" y1="106" x2="150" y2="106" stroke="#2a2550" strokeWidth="1.2" />
-            {Array.from({ length: 16 }, (_, i) => (
-              <line
-                key={i}
-                x1={i * 10}
-                x2={i * 10}
-                y1="106"
-                y2="114"
-                stroke="#2a2550"
-                strokeWidth="1"
-              />
-            ))}
-            {lamps.map((x) => (
-              <g key={x}>
-                <line x1={x} x2={x} y1="114" y2="80" stroke="#2f2a55" strokeWidth="1.5" />
-                <circle cx={x} cy="79" r="11" fill="url(#places-lamp)" />
-                <circle cx={x} cy="79" r="2.2" fill="#f7c08a" />
-                {/* Пока звучит отрывок, отражения мягко пульсируют в такт */}
-                <g
-                  className={clipOn && !reduced ? "places-clip-pulse" : undefined}
-                  style={{ animationDelay: `${(x / 36) * 0.235}s` }}
-                >
-                  <rect
-                    x={x - 1.5}
-                    y={HORIZON + 2}
-                    width="3"
-                    height="40"
-                    fill="url(#places-reflect)"
-                    className={reduced ? undefined : "places-shimmer"}
-                    style={{ animationDelay: `${x / 40}s` }}
-                  />
-                </g>
-              </g>
-            ))}
-          </motion.g>
+           {/* Набережная: деревья, перила, фонари и их отражения */}
+           <motion.g {...fade(0.5)}>
+             <ellipse cx="36" cy="100" rx="26" ry="18" fill="#100f2a" />
+             <ellipse cx="108" cy="98" rx="30" ry="20" fill="#100f2a" />
+             <rect x="0" y="114" width="150" height="6" fill="#0a0c20" />
+             <line x1="0" y1="106" x2="150" y2="106" stroke="#2a2550" strokeWidth="1.2" />
+             {Array.from({ length: 16 }, (_, i) => (
+               <line
+                 key={i}
+                 x1={i * 10}
+                 x2={i * 10}
+                 y1="106"
+                 y2="114"
+                 stroke="#2a2550"
+                 strokeWidth="1"
+               />
+             ))}
+             {lamps.map((x) => (
+               <g key={x}>
+                 <line x1={x} x2={x} y1="114" y2="80" stroke="#2f2a55" strokeWidth="1.5" />
+                 <circle cx={x} cy="79" r="11" fill="url(#places-lamp)" />
+                 <circle cx={x} cy="79" r="2.2" fill="#f7c08a" />
+                 {/* Пока звучит отрывок, отражения мягко пульсируют в такт */}
+                 <g
+                   className={clipOn && !reduced ? "places-clip-pulse" : undefined}
+                   style={{ animationDelay: `${(x / 36) * 0.235}s` }}
+                 >
+                   <rect
+                     x={x - 1.5}
+                     y={HORIZON + 2}
+                     width="3"
+                     height="40"
+                     fill="url(#places-reflect)"
+                     className={reduced ? undefined : "places-shimmer"}
+                     style={{ animationDelay: `${x / 40}s` }}
+                   />
+                 </g>
+               </g>
+             ))}
+           </motion.g>
 
-          {/* Утки, которых мы встречали там каждый раз */}
-          <motion.g {...fade(0.9)}>
-            {ducks.map(([x, y, scale, flip], i) => (
-              <Duck key={i} x={x} y={y} scale={scale} flip={flip} index={i} animate={!reduced} />
-            ))}
-          </motion.g>
+           {/* Утки, которых мы встречали там каждый раз */}
+           <motion.g {...fade(0.9)}>
+             {ducks.map(([x, y, scale, flip], i) => (
+               <Duck key={i} x={x} y={y} scale={scale} flip={flip} index={i} animate={!reduced} />
+             ))}
+           </motion.g>
         </svg>
         {/* Подпись в духе киносубтитров, пока звучит отрывок */}
         <motion.p

@@ -43,7 +43,7 @@ export function Evening({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "n
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.8 }}
             exit={{ opacity: 0, transition: { duration: 0.5, delay: 0 } }}
-            transition={{ duration: 0.8, delay: reduced ? 0 : 4.5 + chapter.lines.length * 0.2 }}
+            transition={{ duration: 0.8, delay: reduced ? 0 : 6.5 + chapter.lines.length * 0.2 }}
           >
             <span>листай вниз</span>
             <svg className="scroll-cue-chevron" width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

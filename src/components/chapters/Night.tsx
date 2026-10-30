@@ -45,7 +45,7 @@ export function Night({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "nam
       />
 
       {/* Тот самый сон: лавочка на краю обрыва в лесу, река и зарево завода вдали */}
-      <div className="relative max-h-[50vh] w-full overflow-hidden">
+      <div className="relative max-h-[30vh] w-full overflow-hidden">
         <DreamScene />
       </div>
 
