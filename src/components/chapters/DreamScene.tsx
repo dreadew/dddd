@@ -8,13 +8,10 @@ import { useRef } from "react";
 // слева вдали завод, над которым всегда стоит оранжевое зарево, а перед ним лес.
 // Чисто декоративная картинка: только фигуры, без текста.
 
-// Кадр выше и уже прежнего: на телефоне лавочка, трубы и церковь крупнее
 const W = 320;
-// Увеличено с 220 до 228, чтобы нижние кроны деревьев не срезались плоской линией
-const H = 228;
-// Линия дальнего берега
+// Увеличили высоту до 234, чтобы дать деревьям "воздух" снизу
+const H = 234;
 const BANK = 96;
-// Ближний край реки, дальше вниз лес под обрывом
 const SHORE = 140;
 
 // Ёлки силуэтом: [x, высота, полуширина]; основание задаётся снаружи
@@ -115,7 +112,6 @@ const farLights: [number, number, boolean][] = [
   [302, 85.4, false],
 ];
 
-// Лесистые склоны по обе стороны долины, над рекой
 const slopeLeft: Pine[] = [
   [4, 46, 11],
   [18, 38, 10],
@@ -139,14 +135,12 @@ const slopeRight: Pine[] = [
   [322, 44, 11],
 ];
 
-// Лес внизу, под обрывом: кроны, на которые смотришь сверху
 const valleyFar: Crown[] = Array.from({ length: 22 }, (_, i) => [
   i * 15 + 4,
   SHORE + 6 + ((i * 5) % 4) * 1.6,
   8 + ((i * 3) % 4) * 1.2,
 ]);
 
-// Второй ряд крон пониже, ближе к обрыву: внизу сплошной лес
 const valleyMid: Crown[] = Array.from({ length: 15 }, (_, i) => [
   i * 14 + 2,
   SHORE + 17 + ((i * 7) % 3) * 1.4,
@@ -184,7 +178,6 @@ const valleyPines: Pine[] = [
   [298, 28, 7],
 ];
 
-// Ближние деревья, обступающие лавочку слева и справа: лес со всех сторон
 const frameLeft: Pine[] = [
   [6, 196, 30],
   [34, 150, 22],
@@ -262,8 +255,9 @@ export function DreamScene() {
       <svg
         ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
-        /* ДОБАВЛЕН класс h-auto и обновлена пропорция на aspect-[320/228], чтобы на iOS не срезался низ */
-        className={`block w-full h-auto aspect-[320/228] ${onScreen ? "" : "night-paused"}`}
+        /* Убран сомнительный класс aspect, добавлен надежный инлайн-стиль */
+        className={`block w-full h-auto ${onScreen ? "" : "night-paused"}`}
+        style={{ aspectRatio: `${W} / ${H}` }}
         aria-hidden="true"
         focusable="false"
       >
@@ -501,7 +495,7 @@ export function DreamScene() {
         </g>
         <path d={pinesPath(valleyMidPines, SHORE + 22)} fill="#141233" />
         <path d={crownsPath(valleyMid)} fill="#141233" />
-        {/* Деревья у подножия обрыва справа: их верхушки ниже кромки */}
+        {/* Деревья у подножия обрыва справа */}
         <path d={pinesPath(valleyPines, 176)} fill="#0c0b22" />
         <path d={crownsPath(valleyNear)} fill="#0c0b22" />
 
@@ -514,6 +508,7 @@ export function DreamScene() {
           <path d="M215 207 L227 209" />
         </g>
         <path d={LEDGE} fill="url(#night-ledge)" />
+
         {/* Тёплый отсвет на самой кромке */}
         <path
           d={LIP}
@@ -522,6 +517,7 @@ export function DreamScene() {
           strokeOpacity="0.22"
           strokeWidth="0.8"
         />
+
         {/* Трава и камешки у края */}
         <g stroke="#0d0c24" strokeWidth="0.8" strokeLinecap="round">
           {[70, 74, 96, 100, 176, 180, 184].map((x, i) => (
@@ -536,15 +532,13 @@ export function DreamScene() {
         </g>
         <ellipse cx="186" cy="163.5" rx="4" ry="2" fill="#0d0c24" />
 
-        {/* Лавочка на краю обрыва, вид сзади и чуть сбоку, на ней никого */}
+        {/* Лавочка на краю обрыва */}
         <g transform="translate(140 177) scale(1.3) translate(-200 -191)">
           <g stroke="#06071a" strokeLinecap="round" fill="none">
-            {/* Ножки */}
             <line x1="181" y1="179" x2="180.5" y2="190" strokeWidth="1.6" />
             <line x1="215" y1="179" x2="215.5" y2="189" strokeWidth="1.6" />
             <line x1="185" y1="183" x2="186" y2="191.5" strokeWidth="1.3" />
             <line x1="219" y1="182.5" x2="220" y2="190.5" strokeWidth="1.3" />
-            {/* Сиденье: почти сливается с фоном, только легкий намек на форму */}
             <path
               d="M179 180 L217 179.5 L221 181.5 L184 182.2 Z"
               fill="#0d0e26"
@@ -561,7 +555,6 @@ export function DreamScene() {
               strokeWidth="1.2"
             />
           </g>
-          {/* Минимальный блик на самом краю */}
           <g
             stroke="#f7c08a"
             strokeOpacity="0.15"
@@ -573,8 +566,8 @@ export function DreamScene() {
           </g>
         </g>
 
-        {/* Лес вокруг: высокие ели обступают уступ с обеих сторон */}
-        <path d={pinesPath(frameRight, H + 2)} fill="#08091c" />
+        {/* Лес вокруг: ели отрисовываются ровно до H, чтобы не вылезать за viewBox */}
+        <path d={pinesPath(frameRight, H)} fill="#08091c" />
         <path
           d={crownsPath([
             [236, 206, 16],
@@ -582,7 +575,7 @@ export function DreamScene() {
           ])}
           fill="#08091c"
         />
-        <path d={pinesPath(frameLeft, H + 2)} fill="#07081a" />
+        <path d={pinesPath(frameLeft, H)} fill="#07081a" />
         <path
           d={crownsPath([
             [78, 210, 15],
