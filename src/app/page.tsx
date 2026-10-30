@@ -55,6 +55,14 @@ export default function Home() {
 
   // После ухода стартового экрана фокус переходит к первой главе, без прокрутки.
   useEffect(() => {
+    if (!started) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [started]);
+
+  useEffect(() => {
     if (started) document.getElementById(chapters[0].id)?.focus({ preventScroll: true });
   }, [started]);
 

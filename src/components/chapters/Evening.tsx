@@ -25,11 +25,11 @@ export function Evening({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "n
           initial={{ opacity: 0, y: reduced ? 0 : 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.6 }}
-          transition={
-            reduced
-              ? { duration: 0.3 }
-              : { duration: 1.1, delay: 0.5 + i * 0.9, ease: "easeOut" }
-          }
+           transition={
+             reduced
+               ? { duration: 0.3 }
+               : { duration: 1.4, delay: 0.8 + i * 1.4, ease: "easeOut" }
+           }
           className={i === chapter.lines.length - 1 ? "subtitle text-2xl text-[#f7c08a]" : undefined}
         >
           {fillName(line, name)}

@@ -115,22 +115,22 @@ export function Question({ onYes, chapter, name = "ты" }: QuestionProps) {
     initial: { opacity: 0, y: reduced ? 0 : 12 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, amount: 0.5 },
-    transition: reduced ? { duration: 0.3, delay: reducedDelay } : { duration: 0.9, delay, ease: "easeOut" as const },
+    transition: reduced ? { duration: 0.3, delay: reducedDelay } : { duration: 1.1, delay, ease: "easeOut" as const },
   });
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex min-h-full flex-col justify-center gap-8 py-12">
       {chapter && (
         <div className="flex flex-col gap-4 text-center text-lg leading-relaxed">
           {chapter.lines.map((line, i) => (
-            <motion.p key={i} {...appear(0.3 + i * 0.5)}>
+            <motion.p key={i} {...appear(0.5 + i * 0.8)}>
               {fillName(line, name)}
             </motion.p>
           ))}
         </div>
       )}
 
-      <motion.p {...appear(1.4)} className="subtitle text-center text-[1.625rem] leading-snug">
+      <motion.p {...appear(1.8)} className="subtitle text-center text-[1.625rem] leading-snug">
         {fillName(questionText.ask, name)}
       </motion.p>
 

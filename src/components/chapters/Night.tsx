@@ -45,7 +45,9 @@ export function Night({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "nam
       />
 
       {/* Тот самый сон: лавочка на краю обрыва в лесу, река и зарево завода вдали */}
-      <DreamScene />
+      <div className="relative max-h-[50vh] w-full overflow-hidden">
+        <DreamScene />
+      </div>
 
       {chapter.lines.map((line, i) => (
         <motion.p
@@ -58,7 +60,7 @@ export function Night({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "nam
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.6 }}
-          transition={reduced ? { duration: 0.3 } : { duration: 1.6, delay: 0.8 + i * 1.1, ease: "easeOut" }}
+           transition={reduced ? { duration: 0.3 } : { duration: 1.8, delay: 1.2 + i * 1.5, ease: "easeOut" }}
         >
           {fillName(line, name)}
         </motion.p>

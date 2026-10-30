@@ -96,11 +96,14 @@ export function Places({ chapter, name }: Pick<ChapterBodyProps, "chapter" | "na
   const mostlyInView = useInView(rootRef, { amount: 0.6 });
   const { track, status, enterClip, exitClip } = useAudio();
   useEffect(() => {
-    if (mostlyInView) enterClip();
-    else exitClip();
-  }, [mostlyInView, enterClip, exitClip]);
-  const clipOn = track === "clip";
-  const clipPlaying = clipOn && status === "playing";
+    if (mostlyInView) {
+      // Удаляем вызов enterClip(), чтобы не включался трек
+    } else {
+      exitClip();
+    }
+  }, [mostlyInView, exitClip]);
+  const clipOn = false;
+  const clipPlaying = false;
 
   const fade = (delay: number) => ({
     initial: { opacity: 0 },
