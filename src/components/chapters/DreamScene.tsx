@@ -8,9 +8,10 @@ import { useRef } from "react";
 // слева вдали завод, над которым всегда стоит оранжевое зарево, а перед ним лес.
 // Чисто декоративная картинка: только фигуры, без текста.
 
-// Кадр выше и уже прежнего (360x204): на телефоне лавочка, трубы и церковь крупнее
+// Кадр выше и уже прежнего: на телефоне лавочка, трубы и церковь крупнее
 const W = 320;
-const H = 220;
+// Увеличено с 220 до 228, чтобы нижние кроны деревьев не срезались плоской линией
+const H = 228;
 // Линия дальнего берега
 const BANK = 96;
 // Ближний край реки, дальше вниз лес под обрывом
@@ -258,13 +259,14 @@ export function DreamScene() {
           : { duration: 1.8, delay: 0.2, ease: "easeOut" }
       }
     >
-        <svg
-          ref={svgRef}
-          viewBox={`0 0 ${W} ${H}`}
-          className={`block w-full aspect-[320/220] ${onScreen ? "" : "night-paused"}`}
-          aria-hidden="true"
-          focusable="false"
-        >
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${H}`}
+        /* ДОБАВЛЕН класс h-auto и обновлена пропорция на aspect-[320/228], чтобы на iOS не срезался низ */
+        className={`block w-full h-auto aspect-[320/228] ${onScreen ? "" : "night-paused"}`}
+        aria-hidden="true"
+        focusable="false"
+      >
         <defs>
           <linearGradient id="night-sky" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#0b1026" />
@@ -550,7 +552,14 @@ export function DreamScene() {
               strokeOpacity="0.12"
               strokeWidth="0.4"
             />
-            <line x1="215" y1="174.5" x2="219.5" y2="177" stroke="#0d0e26" strokeWidth="1.2" />
+            <line
+              x1="215"
+              y1="174.5"
+              x2="219.5"
+              y2="177"
+              stroke="#0d0e26"
+              strokeWidth="1.2"
+            />
           </g>
           {/* Минимальный блик на самом краю */}
           <g
