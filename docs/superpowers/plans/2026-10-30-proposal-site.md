@@ -142,3 +142,9 @@
 - Покрытие спецификации: стек и стиль (T1, T2), плеер и трек (T3), стартовый экран и мобильность (T4), главы 1–4 (T5), предложение, ускользающее «нет» и финал (T6), деплой и README (T7), имя из `.env` (T1).
 - Согласованность имён: `getHerName`, `fillName`, `useAudio`, `nextStatus`, `dodgePosition` используются одинаково во всех задачах.
 - Каждая строка Review Focus закреплена: имя (T1), трек (T3), пауза (T3), «нет» на узком экране (T6), reduced motion (T5, T6).
+
+---
+
+## Revision 2026-10-30 (Task 8)
+
+Requested by the author after reviewing the built site: unified serif typography, chapter labels removed, content rewritten from the author's real details (dating-site opener, first date, embankment/water/ducks, dream after the first hike), one Talk question, track switched to a config (default Harry Styles — Sweet Creature), and the audio pause/resume bug fixed. Full requirements: Task 8 brief in the SDD workspace (`task-8-brief.md`).
